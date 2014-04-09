@@ -15,9 +15,7 @@ html.no-js(lang="en")
     title The Mandelbrot Set
     link(href="css/application.css", rel="stylesheet")
     script(src="js/lib/modernizr.js")
-    // @if env!='optimize' 
     script(src="js/lib/require.js", data-main="js/main")
-    // @endif 
   body
     #container
       canvas#mandelbrot
@@ -92,7 +90,3 @@ html.no-js(lang="en")
 
     #domain.info
       span
-      
-    // @if env='optimize' 
-    script(src="js/application.js")
-    // @endif 
