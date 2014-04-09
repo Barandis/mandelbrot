@@ -1,0 +1,98 @@
+!!! 5
+//if lt IE 7
+  <html class="ie ie6 ie-lte9 ie-lte8 ie-lte7 no-js" lang="en">
+//if IE 7
+  <html class="ie ie7 ie-lte9 ie-lte8 ie-lte7 no-js" lang="en">
+//if IE 8
+  <html class="ie ie8 ie-lte9 ie-lte8 no-js" lang="en">
+//if IE 9
+  <html class="ie9 ie-lte9 no-js" lang="en">
+//[if (gt IE 9)|!(IE)] <!
+html.no-js(lang="en")
+  // <![endif]
+  head
+    meta(charset="utf-8")
+    title The Mandelbrot Set
+    link(href="css/application.css", rel="stylesheet")
+    script(src="js/lib/modernizr.js")
+    // @if env!='optimize' 
+    script(src="js/lib/require.js", data-main="js/main")
+    // @endif 
+  body
+    #container
+      canvas#mandelbrot
+
+    button#control Hide Panels
+
+    #settings.info
+      header
+        h2 The Mandelbrot Set
+        p A visualization in HTML5 and JavaScript
+      section#inputs
+        div
+          label(for="re") Center (Re):
+          input#re(type="text")
+        div
+          label(for="im") Center (Im):
+          input#im(type="text")
+        div
+          label(for="zoom") Zoom:
+          input#zoom(type="text")
+        div
+          label(for="depth") Depth:
+          input#depth(type="text")
+          input#auto-depth(type="checkbox", checked)
+          label(for="auto-depth") auto
+        div
+          label(for="escape") Escape radius:
+          input#escape(type="text")
+        div
+          label(for="palette") Color scheme:
+          select#palette
+            option(value="0") Orange
+            option(value="1") Red
+            option(value="2") Blue
+            option(value="3") Grayscale
+            option(value="4") Redscale
+            option(value="5") Greenscale
+            option(value="6") Bluescale
+        div
+          label(for="supersamples") Supersamples:
+          input#supersamples(type="text")
+        div
+          label(for="update") Update timeout:
+          input#update(type="text")
+        div
+          button#draw-action Draw
+          button#reset-action Reset
+          button#export-action Export
+      section#description
+        p.
+          Click to zoom in on the point where you clicked, or Shift-click to zoom out on the clicked point. Ctrl-click
+          will re-center the visualization where you click without zooming/unzooming.
+      footer
+        p Created by Thomas Otterson
+
+    #render.info
+      div
+        label(for="render-time") Render time:
+        span#render-time
+        |  s
+      div
+        label(for="render-speed") Render speed:
+        span#render-speed
+        | px/
+        span#render-unit
+      div
+        label(for="pixels") Pixels:
+        span#pixels
+      div
+        label(for="size") Size:
+        span#size
+
+    #domain.info
+      span
+      
+    // @if env='optimize' 
+    script(src="js/application.js")
+    // @endif 

@@ -1,0 +1,161 @@
+body {
+  background-color: #000;
+  padding: 0;
+  margin: 0;
+  font-size: 1em;
+  font-family: sans-serif;
+}
+a {
+  color: #ccc;
+  text-decoration: none;
+}
+a:hover {
+  color: #fff;
+}
+button {
+  background-color: rgba(30,30,30,0.5);
+  color: #fff;
+  border: 1px solid #666;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  outline: none;
+  padding: 5px;
+  text-shadow: 1px 1px 2px #000;
+  cursor: pointer;
+  -webkit-transition: background-color 500ms, border-color 500ms;
+  -moz-transition: background-color 500ms, border-color 500ms;
+  -o-transition: background-color 500ms, border-color 500ms;
+  -ms-transition: background-color 500ms, border-color 500ms;
+  transition: background-color 500ms, border-color 500ms;
+}
+button:hover,
+button:focus {
+  background-color: #666;
+  border-color: #fff;
+  -webkit-transition: background-color 500ms, border-color 500ms;
+  -moz-transition: background-color 500ms, border-color 500ms;
+  -o-transition: background-color 500ms, border-color 500ms;
+  -ms-transition: background-color 500ms, border-color 500ms;
+  transition: background-color 500ms, border-color 500ms;
+}
+input,
+select {
+  background-color: rgba(30,30,30,0.5);
+  color: #fff;
+  border: 1px solid #666;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  outline: none;
+  -webkit-transition: background-color 500ms, border-color 500ms;
+  -moz-transition: background-color 500ms, border-color 500ms;
+  -o-transition: background-color 500ms, border-color 500ms;
+  -ms-transition: background-color 500ms, border-color 500ms;
+  transition: background-color 500ms, border-color 500ms;
+}
+input:focus,
+select:focus {
+  background-color: #666;
+  border-color: #fff;
+  -webkit-transition: background-color 500ms, border-color 500ms;
+  -moz-transition: background-color 500ms, border-color 500ms;
+  -o-transition: background-color 500ms, border-color 500ms;
+  -ms-transition: background-color 500ms, border-color 500ms;
+  transition: background-color 500ms, border-color 500ms;
+}
+input {
+  padding: 0.1em 0.5em;
+}
+#mandelbrot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  background-color: #000;
+  padding: 0;
+  margin: 0;
+}
+.info {
+  background-color: rgba(30,30,30,0.5);
+  color: #fff;
+  padding: 5px;
+  font-size: 0.8em;
+  text-shadow: 1px 1px 2px #000;
+  border: 1px solid #666;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+.info h3 {
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.5em;
+  text-align: center;
+  border-bottom: 1px solid #666;
+}
+.info label {
+  display: inline-block;
+  width: 40%;
+  font-weight: bold;
+}
+#control {
+  width: 8em;
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  font-size: 0.9em;
+}
+#settings {
+  width: 28em;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  color: #fff;
+  border-color: #666;
+}
+#settings header {
+  text-align: center;
+  padding: 5px 0;
+  border-bottom: 1px solid #666;
+}
+#settings header h2 {
+  margin: 0;
+}
+#settings header p {
+  margin: 0;
+}
+#settings footer {
+  font-style: italic;
+  text-align: center;
+  padding: 5px 0;
+  border-top: 1px solid #666;
+}
+#settings section#inputs {
+  padding: 5px;
+}
+#settings section#inputs div:last-child {
+  text-align: center;
+  padding-top: 5px;
+}
+#settings section#inputs div:last-child button {
+  width: 6em;
+}
+#settings section#inputs select,
+#settings section#inputs input[type="text"] {
+  width: 14em;
+}
+#settings section#inputs input#depth {
+  width: 6em;
+}
+#settings section#inputs label[for="auto-depth"] {
+  display: inline;
+}
+#render {
+  width: 18em;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+#domain {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}

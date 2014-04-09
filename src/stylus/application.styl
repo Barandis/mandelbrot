@@ -1,0 +1,120 @@
+@import 'nib'
+
+semi-transparent = rgba(30, 30, 30, 0.5)
+opaque = #666
+
+body
+  background-color black
+  padding 0
+  margin 0
+  font-size 1.0em
+  font-family sans-serif
+
+a
+  color #ccc
+  text-decoration none
+  &:hover
+    color #fff
+
+button
+  background-color semi-transparent
+  color white
+  border 1px solid #666
+  border-radius 4px
+  outline none
+  padding 5px
+  text-shadow 1px 1px 2px black
+  cursor pointer
+  transition background-color 500ms, border-color 500ms
+  &:hover
+  &:focus
+    background-color opaque
+    border-color white
+    transition background-color 500ms, border-color 500ms
+
+input
+select
+  background-color semi-transparent
+  color white
+  border 1px solid #666
+  border-radius 4px
+  outline none
+  transition background-color 500ms, border-color 500ms
+  &:focus
+    background-color opaque
+    border-color white
+    transition background-color 500ms, border-color 500ms
+
+input
+  padding 0.1em 0.5em
+
+#mandelbrot
+  absolute top 0 left 0
+  z-index 0
+  background-color black
+  padding 0
+  margin 0
+
+.info
+  background-color semi-transparent
+  color white
+  padding 5px
+  font-size 0.8em
+  text-shadow 1px 1px 2px black
+  border 1px solid #666
+  border-radius 4px
+  h3
+    margin-top 0
+    margin-bottom 0.5em
+    padding-bottom 0.5em
+    text-align center
+    border-bottom 1px solid #666
+  label
+    display inline-block
+    width 40%
+    font-weight bold
+
+#control
+  width 8em
+  absolute bottom 5px left 5px
+  font-size 0.9em
+
+#settings
+  width 28em
+  absolute top 5px left 5px
+  color white
+  border-color #666
+  header
+    text-align center
+    padding 5px 0
+    border-bottom 1px solid #666
+    h2
+      margin 0
+    p
+      margin 0
+  footer
+    font-style italic
+    text-align center
+    padding 5px 0
+    border-top 1px solid #666
+  section#inputs
+    padding 5px
+    div:last-child
+      text-align center
+      padding-top 5px
+      button
+        width 6em
+    select
+    input[type="text"]
+      width 14em
+    input#depth
+      width 6em
+    label[for="auto-depth"]
+      display inline
+
+#render
+  width 18em
+  absolute top 5px right 5px
+
+#domain
+  absolute bottom 5px right 5px
