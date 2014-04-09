@@ -1,0 +1,83 @@
+@import 'nib'
+
+body
+  font-family Verdana, Arial, Helvetica, sans-serif
+  font-size 1em
+  overflow-y scroll
+  padding 0
+  margin 0
+
+header
+  background-color white
+  padding 0 2em
+  position fixed
+  height 100px
+  top 0
+  left 0
+  right 0
+  box-shadow 0 0 3px rgb(0, 0, 0, 0.4)
+  z-index 10
+  #page-title
+    float left
+    h1
+      margin-bottom 0
+    p
+      font-style italic
+  #theme
+    float right
+
+#container
+  width 780px
+  margin 0 auto
+  padding 100px 2em 1em 2em
+  box-shadow 0 0 5px rgba(0, 0, 0, .4)
+  background-color white
+  opacity 1
+  position relative
+p, li
+  margin 1em 0
+  font-size 0.9em
+  line-height 1.8
+pre, code
+  font-family 'Meslo LG S DZ', 'Meslo LG S', Consolas, 'Courier New', monospace
+  font-size 12px
+  padding 0 0.4em
+  margin 0 0.3em
+  border 1px solid #ddd
+  background-color #f0f0f0
+  border-radius 3px
+p a, #toc a
+  text-decoration none
+  color green
+  font-weight bold
+  &:hover
+    color lightgreen
+h1 + p
+  margin-top 0
+
+h1
+  font-size 2em
+  margin-bottom 0.75em
+h2
+  font-size 1.5em
+  margin 2.5em 0 0.5em
+  border-bottom 1px solid #999
+  padding-bottom 5px
+h3
+  font-weight bold
+h4
+  font-weight normal
+  font-style italic
+  margin-top 0
+  margin-bottom 10px
+
+ol, ul, li
+  line-height normal
+section#toc > p > ol
+  list-style-type decimal
+  > li > ol
+    list-style-type lower-alpha
+    > li > ol
+      list-style-type lower-roman
+      ol
+        list-style-type decimal

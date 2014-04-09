@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Mandelbrot</title>
+    <link type="text/css" rel="stylesheet" href="css/application.css">
+    <script src="js/jquery/jquery.js"></script>
+  </head>
+  <body>
+    <header>
+      <div id="page-title">
+        <h1>Mandelbrot</h1>
+        <p>A Mandelbrot set visualization in HTML5 and JavaScript</p>
+      </div>
+    </header>
+    <section id="container">
+      <section>
+        <p>
+          This is a project to build a Mandelbrot set renderer in JavaScript and HTML5 (okay, actually 
+          <a href="http://livescript.net/">LiveScript</a> and <a href="http://jade-lang.com/">Jade</a>, but the end
+          product is the same either way). <a href="mandelbrot.html">Click this link</a> to see it in action!
+          
+        </p>
+      </section>
+      <section id="toc">
+        <h2>Table of Contents</h2>
+        <p>
+          <ol>
+            <li><a href="#">Home</a>
+              <ol>
+                <li><a href="#guide">Quick Guide</a></li>
+                <li><a href="#features">Features</a></li>
+              </ol>
+            </li>
+          </ol>
+        </p>
+      </section>
+      <section>
+        <h2><a id="guide">Quick Guide</a></h2>
+        <p>
+          There's a lot of detail on both the operation of the renderer and the math behind it on other pages, but for
+          those who just want to get started, this section is for you.
+          
+        </p>
+        <h3>Mouse Navigation</h3>
+        <p>
+          Mouse navigation is pretty intuitive: click on the screen, and the page will zoom in on the point where you
+          clicked. If you hold down Shift while clicking, you will instead be zoomed out. If you don't want any zooming
+          at all, hold down Control (Command on Mac) and click &mdash; this will re-center the image on the point that
+          you clicked without zooming at all.
+          
+        </p>
+        <h3>Settings</h3>
+        <p>
+          The panel on the upper left can be used to input detailed settings. The important ones are the first three:
+          these are the real and imaginary coordinates of the center and the amount of zoom. These can be useful if you
+          come across one of those pages with nice Mandelbrot images, because often they will give the center coordinates
+          and zoom that they used to make the picture, and then you can try it yourself.
+        </p>
+        <p>
+          Depth is essentially how much time the generator takes to make the image &mdash; higher numbers reveal more
+          detail (detail that may not be needed if you're not zoomed in far enough) but take longer to render. There is an
+          "auto" checkbox that, when checked, will figure out a reasonable depth automatically based on your zoom level.
+          It's highly recommended to use this if you're just browsing around.
+        </p>
+        <p>
+          Escape radius is one of the mathematical controls that will be explained more thoroughly on another page, but
+          suffice it to say that you should seldom ever have need to change it (and changing it doesn't do much anyway).
+          Color scheme is pretty self-explanatory. Supersamples control anti-aliasing, which smooths the image overall
+          &mdash; a higher number makes the image look nicer, but it takes a lot longer to render. You should never have
+          need to go above 16. Finally, Update timeout tells the renderer how often to update the image as it's drawing it.
+          Raising this number will very slightly improve rendering time.
+        </p>
+        <p>
+          Under the settings are three buttons. The first, Render, causes the image to be rendered with the current
+          settings. This button has to be pushed any time you change any settings (including Color scheme) and want to see
+          the results. Reset renders an image using the default settings. Export generates a PNG file that you can then
+          save to your computer by right-clicking on it and choosing "Save Image As..." or something similar.
+          
+        </p>
+      </section>
+      <section>
+        <h2><a id="features">Features</a></h2>
+        <ul>
+          <li>Easy mouse-click navigation and zooming</li>
+          <li>Configurable center, zoom, iteration depth, anti-aliasing, divergence escape radius</li>
+          <li>Several different palettes of colors to choose from</li>
+          <li>Zoomable a long way down, limited only by floating-point precision in JavaScript (I've done 1 quadrillion)</li>
+          <li>Bookmarkable parameters</li>
+          <li>Export any image as a PNG file</li>
+        </ul>
+      </section>
+    </section>
+  </body>
+</html>
