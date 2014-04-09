@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="ie ie6 ie-lte9 ie-lte8 ie-lte7 no-js" lang="en">
+<![endif]-->
+<!--[if IE 7]><html class="ie ie7 ie-lte9 ie-lte8 ie-lte7 no-js" lang="en">
+<![endif]-->
+<!--[if IE 8]><html class="ie ie8 ie-lte9 ie-lte8 no-js" lang="en">
+<![endif]-->
+<!--[if IE 9]><html class="ie9 ie-lte9 no-js" lang="en">
+<![endif]-->
+<!--[if (gt IE 9)|!(IE)] <!-->
+<html lang="en" class="no-js">
+  <!-- <![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <title>The Mandelbrot Set</title>
+    <link href="css/application.css" rel="stylesheet">
+    <script src="js/lib/modernizr.js"></script>
+    <!-- @if env!='optimize' -->
+    <script src="js/lib/require.js" data-main="js/main"></script>
+    <!-- @endif -->
+  </head>
+  <body>
+    <div id="container">
+      <canvas id="mandelbrot"></canvas>
+    </div>
+    <button id="control">Hide Panels</button>
+    <div id="settings" class="info">
+      <header>
+        <h2>The Mandelbrot Set</h2>
+        <p>A visualization in HTML5 and JavaScript</p>
+      </header>
+      <section id="inputs">
+        <div>
+          <label for="re">Center (Re):</label>
+          <input id="re" type="text">
+        </div>
+        <div>
+          <label for="im">Center (Im):</label>
+          <input id="im" type="text">
+        </div>
+        <div>
+          <label for="zoom">Zoom:</label>
+          <input id="zoom" type="text">
+        </div>
+        <div>
+          <label for="depth">Depth:</label>
+          <input id="depth" type="text">
+          <input id="auto-depth" type="checkbox" checked>
+          <label for="auto-depth">auto</label>
+        </div>
+        <div>
+          <label for="escape">Escape radius:</label>
+          <input id="escape" type="text">
+        </div>
+        <div>
+          <label for="palette">Color scheme:</label>
+          <select id="palette">
+            <option value="0">Orange</option>
+            <option value="1">Red</option>
+            <option value="2">Blue</option>
+            <option value="3">Grayscale</option>
+            <option value="4">Redscale</option>
+            <option value="5">Greenscale</option>
+            <option value="6">Bluescale</option>
+          </select>
+        </div>
+        <div>
+          <label for="supersamples">Supersamples:</label>
+          <input id="supersamples" type="text">
+        </div>
+        <div>
+          <label for="update">Update timeout:</label>
+          <input id="update" type="text">
+        </div>
+        <div>
+          <button id="draw-action">Draw</button>
+          <button id="reset-action">Reset</button>
+          <button id="export-action">Export</button>
+        </div>
+      </section>
+      <section id="description">
+        <p>
+          Click to zoom in on the point where you clicked, or Shift-click to zoom out on the clicked point. Ctrl-click
+          will re-center the visualization where you click without zooming/unzooming.
+        </p>
+      </section>
+      <footer>
+        <p>Created by Thomas Otterson</p>
+      </footer>
+    </div>
+    <div id="render" class="info">
+      <div>
+        <label for="render-time">Render time:</label><span id="render-time"></span> s
+      </div>
+      <div>
+        <label for="render-speed">Render speed:</label><span id="render-speed"></span>px/<span id="render-unit"></span>
+      </div>
+      <div>
+        <label for="pixels">Pixels:</label><span id="pixels"></span>
+      </div>
+      <div>
+        <label for="size">Size:</label><span id="size"></span>
+      </div>
+    </div>
+    <div id="domain" class="info"><span></span></div>
+    <!-- @if env='optimize' -->
+    <script src="js/application.js"></script>
+    <!-- @endif -->
+  </body>
+</html>
