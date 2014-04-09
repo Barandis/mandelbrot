@@ -1,95 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="utf-8">
-    <title>Mandelbrot</title>
-    <link type="text/css" rel="stylesheet" href="css/page.css">
-    <script src="js/lib/jquery.js"></script>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Mandelbrot by Barandis</title>
   </head>
+
   <body>
     <header>
-      <div id="page-title">
+      <div class="inner">
         <h1>Mandelbrot</h1>
-        <p>A Mandelbrot set visualization in HTML5 and JavaScript</p>
+        <h2>A Mandelbrot set visualization in HTML5 and JavaScript</h2>
+        <a href="https://github.com/Barandis/mandelbrot" class="button"><small>View project on</small>GitHub</a>
       </div>
     </header>
-    <section id="container">
-      <section>
-        <p>
-          This is a project to build a Mandelbrot set renderer in JavaScript and HTML5 (okay, actually 
-          <a href="http://livescript.net/">LiveScript</a> and <a href="http://jade-lang.com/">Jade</a>, but the end
-          product is the same either way). <a href="mandelbrot.html">Click this link</a> to see it in action!
-          
-        </p>
-      </section>
-      <section id="toc">
-        <h2>Table of Contents</h2>
-        <p>
-          <ol>
-            <li><a href="#">Home</a>
-              <ol>
-                <li><a href="#guide">Quick Guide</a></li>
-                <li><a href="#features">Features</a></li>
-              </ol>
-            </li>
-          </ol>
-        </p>
-      </section>
-      <section>
-        <h2><a id="guide">Quick Guide</a></h2>
-        <p>
-          There's a lot of detail on both the operation of the renderer and the math behind it on other pages, but for
-          those who just want to get started, this section is for you.
-          
-        </p>
-        <h3>Mouse Navigation</h3>
-        <p>
-          Mouse navigation is pretty intuitive: click on the screen, and the page will zoom in on the point where you
-          clicked. If you hold down Shift while clicking, you will instead be zoomed out. If you don't want any zooming
-          at all, hold down Control (Command on Mac) and click &mdash; this will re-center the image on the point that
-          you clicked without zooming at all.
-          
-        </p>
-        <h3>Settings</h3>
-        <p>
-          The panel on the upper left can be used to input detailed settings. The important ones are the first three:
-          these are the real and imaginary coordinates of the center and the amount of zoom. These can be useful if you
-          come across one of those pages with nice Mandelbrot images, because often they will give the center coordinates
-          and zoom that they used to make the picture, and then you can try it yourself.
-        </p>
-        <p>
-          Depth is essentially how much time the generator takes to make the image &mdash; higher numbers reveal more
-          detail (detail that may not be needed if you're not zoomed in far enough) but take longer to render. There is an
-          "auto" checkbox that, when checked, will figure out a reasonable depth automatically based on your zoom level.
-          It's highly recommended to use this if you're just browsing around.
-        </p>
-        <p>
-          Escape radius is one of the mathematical controls that will be explained more thoroughly on another page, but
-          suffice it to say that you should seldom ever have need to change it (and changing it doesn't do much anyway).
-          Color scheme is pretty self-explanatory. Supersamples control anti-aliasing, which smooths the image overall
-          &mdash; a higher number makes the image look nicer, but it takes a lot longer to render. You should never have
-          need to go above 16. Finally, Update timeout tells the renderer how often to update the image as it's drawing it.
-          Raising this number will very slightly improve rendering time.
-        </p>
-        <p>
-          Under the settings are three buttons. The first, Render, causes the image to be rendered with the current
-          settings. This button has to be pushed any time you change any settings (including Color scheme) and want to see
-          the results. Reset renders an image using the default settings. Export generates a PNG file that you can then
-          save to your computer by right-clicking on it and choosing "Save Image As..." or something similar.
-          
-        </p>
-      </section>
-      <section>
-        <h2><a id="features">Features</a></h2>
-        <ul>
-          <li>Easy mouse-click navigation and zooming</li>
-          <li>Configurable center, zoom, iteration depth, anti-aliasing, divergence escape radius</li>
-          <li>Several different palettes of colors to choose from</li>
-          <li>Zoomable a long way down, limited only by floating-point precision in JavaScript (I've done 1 quadrillion)</li>
-          <li>Bookmarkable parameters</li>
-          <li>Export any image as a PNG file</li>
-        </ul>
-      </section>
-    </section>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h3>
+<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+
+<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+
+<pre><code>$ cd your_repo_root/repo_name
+$ git fetch origin
+$ git checkout gh-pages
+</code></pre>
+
+<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+
+<h3>
+<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+
+<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+
+<h3>
+<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+
+<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+
+<h3>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+
+<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+
+<h3>
+<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+
+<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/Barandis/mandelbrot/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/Barandis/mandelbrot/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/Barandis/mandelbrot"></a> is maintained by <a href="https://github.com/Barandis">Barandis</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
   </body>
 </html>
