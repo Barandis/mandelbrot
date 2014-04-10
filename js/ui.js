@@ -10,7 +10,7 @@
       supersamples: 0,
       depth: 50,
       autoDepth: true,
-      palette: 2,
+      palette: 1,
       update: 100
     };
     canvas = $('#mandelbrot').get(0);
@@ -61,7 +61,9 @@
         renderer.render(canvas, ctx, img, options);
       });
       $('#export-action').click(function(){
-        window.location = canvas.toDataURL('image/png');
+        var features;
+        features = "width=" + canvas.width + ",height=" + canvas.height + ",location=no";
+        window.open(canvas.toDataURL('image/png'), "Mandelbrot Set Export", features);
       });
       checkDisabled = function(){
         $('#depth').prop('disabled', $(this).is(':checked'));

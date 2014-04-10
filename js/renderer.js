@@ -1,7 +1,7 @@
 (function(){
   define(['jquery', './algorithm'], function($, algorithm){
     var zoomDefault, renderId, stopping, render, adjustAspectRatio, updateUrl, updateInfo, addRgb, divRgb, metricize, getRange, stop;
-    zoomDefault = 3.4;
+    zoomDefault = 2.6;
     renderId = 0;
     stopping = false;
     render = function(canvas, ctx, img, options){
