@@ -2,8 +2,10 @@
 
 const zoom-default = 3.4
 render-id = 0
+stopping = false
 
 render = (canvas, ctx, img, options) !->
+  stopping := false
   palette = algorithm.palettes[options.palette]
   [r-range, i-range] = get-range options
 
@@ -73,7 +75,7 @@ render = (canvas, ctx, img, options) !->
     $ \#size .text "#{canvas.width} x #{canvas.height}"
 
     render-line = !->
-      return if id isnt render-id or start-height isnt canvas.height or start-width isnt canvas.width
+      return if stopping or id isnt render-id or start-height isnt canvas.height or start-width isnt canvas.width
       
       draw-fn r-range.0, ci
       ci += di
@@ -120,9 +122,7 @@ adjust-aspect-ratio = (zoom) !->
 update-url = (options) !->
   { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update } = options
   ad = if auto-depth then 1 else 0
-  window.location.hash = "re=#re&im=#im&zoom=#zoom&escape=#escape&depth=#depth
-                          &auto-depth=#ad&supersamples=#supersamples&palette=#palette
-                          &update=#update"
+  window.location.hash = "r=#re&i=#im&z=#zoom&e=#escape&d=#depth&a=#ad&s=#supersamples&p=#palette&u=#update"
 
 update-info = (options, re-range, im-range) !->
   { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update } = options
@@ -131,11 +131,11 @@ update-info = (options, re-range, im-range) !->
   $ \#zoom .val zoom
   $ \#escape .val escape
   $ \#depth .val depth
-  $ \#supersamples .val supersamples
   $ \#update .val update
 
   $ \#auto-depth .prop \checked, auto-depth
   $ \#palette .val palette
+  $ \#supersamples .val supersamples
 
   [rmin, rmax] = re-range
   [imin, imax] = im-range
@@ -167,4 +167,6 @@ get-range = (options) ->
   [[ options.re - zoom.0 / 2, options.re + zoom.0 / 2 ],
    [ options.im + zoom.1 / 2, options.im - zoom.1 / 2 ]]
 
-{ render, get-range }
+stop = !-> stopping := true
+
+{ render, stop, get-range }

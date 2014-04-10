@@ -5,7 +5,7 @@ const defaults =
   im: 0.0
   zoom: 1.0
   escape: 2.0
-  supersamples: 1
+  supersamples: 0
   depth: 50
   auto-depth: true
   palette: 2
@@ -47,6 +47,9 @@ init = !->
     fill-options-from-settings!
     renderer.render canvas, ctx, img, options
 
+  $ \#stop-action .click !->
+    renderer.stop!
+
   $ \#reset-action .click !->
     options := ^^defaults
     renderer.render canvas, ctx, img, options
@@ -71,27 +74,27 @@ init-canvas = !->
   img := ctx.create-image-data canvas.width, 1
 
 fill-options-from-url = !->
-  params = window.location.hash / '&'
+  params = (window.location.hash.substring 1) / '&'
   for param in params
     [key, value] = param / '='
 
     switch key
-    | \#re            => options.re = parse-float value
-    | \im             => options.im = parse-float value
-    | \zoom           => options.zoom = parse-float value
-    | \escape         => options.escape = parse-float value
-    | \supersamples   => options.supersamples = parse-int value
-    | \depth          => options.depth = parse-int value
-    | \auto-depth     => options.auto-depth = value is \1
-    | \palette        => options.palette = parse-int value
-    | \update         => options.update = parse-int value
+    | \r            => options.re = parse-float value
+    | \i            => options.im = parse-float value
+    | \z            => options.zoom = parse-float value
+    | \e            => options.escape = parse-float value
+    | \s            => options.supersamples = parse-int value
+    | \d            => options.depth = parse-int value
+    | \a            => options.auto-depth = value is \1
+    | \p            => options.palette = parse-int value
+    | \u            => options.update = parse-int value
 
 fill-options-from-settings = !->
   re                  = $.trim ($ \#re .val!)
   im                  = $.trim ($ \#im .val!)
   zoom                = $.trim ($ \#zoom .val!)
   escape              = $.trim ($ \#escape .val!)
-  supersamples        = $.trim ($ \#supersamples .val!)
+  supersamples        = parse-int ($ \#supersamples .val!)
   depth               = $.trim ($ \#depth .val!)
   auto-depth          = $ \#auto-depth .is \:checked
   palette             = parse-int ($ \#palette .val!)
@@ -101,7 +104,7 @@ fill-options-from-settings = !->
   options.im = parse-float im if im
   options.zoom = parse-float zoom if zoom
   options.escape = parse-float escape if escape
-  options.supersamples = parse-int supersamples if supersamples
+  options.supersamples = supersamples
   options.depth = parse-int depth if depth
   options.auto-depth = auto-depth
   options.palette = palette

@@ -138,9 +138,11 @@ input {
 #settings section#inputs div:last-child button {
   width: 6em;
 }
-#settings section#inputs select,
-#settings section#inputs input[type="text"] {
+#settings section#inputs select {
   width: 14em;
+}
+#settings section#inputs input[type="text"] {
+  width: 13em;
 }
 #settings section#inputs input#depth {
   width: 6em;

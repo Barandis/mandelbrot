@@ -1,10 +1,12 @@
 (function(){
   define(['jquery', './algorithm'], function($, algorithm){
-    var zoomDefault, renderId, render, adjustAspectRatio, updateUrl, updateInfo, addRgb, divRgb, metricize, getRange;
+    var zoomDefault, renderId, stopping, render, adjustAspectRatio, updateUrl, updateInfo, addRgb, divRgb, metricize, getRange, stop;
     zoomDefault = 3.4;
     renderId = 0;
+    stopping = false;
     render = function(canvas, ctx, img, options){
       var palette, ref$, rRange, iRange, factor, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
+      stopping = false;
       palette = algorithm.palettes[options.palette];
       ref$ = getRange(options), rRange = ref$[0], iRange = ref$[1];
       if (options.autoDepth) {
@@ -76,7 +78,7 @@
         $('#size').text(canvas.width + " x " + canvas.height);
         renderLine = function(){
           var now, elapsedTime, speed;
-          if (id !== renderId || startHeight !== canvas.height || startWidth !== canvas.width) {
+          if (stopping || id !== renderId || startHeight !== canvas.height || startWidth !== canvas.width) {
             return;
           }
           drawFn(rRange[0], ci);
@@ -126,7 +128,7 @@
       var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, ad;
       re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update;
       ad = autoDepth ? 1 : 0;
-      window.location.hash = "re=" + re + "&im=" + im + "&zoom=" + zoom + "&escape=" + escape + "&depth=" + depth + "&auto-depth=" + ad + "&supersamples=" + supersamples + "&palette=" + palette + "&update=" + update;
+      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + ad + "&s=" + supersamples + "&p=" + palette + "&u=" + update;
     };
     updateInfo = function(options, reRange, imRange){
       var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, rmin, rmax, imin, imax, horiz, vert;
@@ -136,10 +138,10 @@
       $('#zoom').val(zoom);
       $('#escape').val(escape);
       $('#depth').val(depth);
-      $('#supersamples').val(supersamples);
       $('#update').val(update);
       $('#auto-depth').prop('checked', autoDepth);
       $('#palette').val(palette);
+      $('#supersamples').val(supersamples);
       rmin = reRange[0], rmax = reRange[1];
       imin = imRange[0], imax = imRange[1];
       horiz = Math.abs(rmin - rmax);
@@ -172,8 +174,12 @@
       adjustAspectRatio(zoom);
       return [[options.re - zoom[0] / 2, options.re + zoom[0] / 2], [options.im + zoom[1] / 2, options.im - zoom[1] / 2]];
     };
+    stop = function(){
+      stopping = true;
+    };
     return {
       render: render,
+      stop: stop,
       getRange: getRange
     };
   });

@@ -55,13 +55,19 @@ html.no-js(lang="en")
             option(value="5") Greenscale
             option(value="6") Bluescale
         div
-          label(for="supersamples") Supersamples:
-          input#supersamples(type="text")
+          label(for="supersamples") Anti-aliasing:
+          select#supersamples
+            option(value="0") None
+            option(value="2") 2x
+            option(value="4") 4x
+            option(value="8") 8x
+            option(value="16") 16x
         div
           label(for="update") Update timeout:
           input#update(type="text")
         div
           button#draw-action Render
+          button#stop-action Stop
           button#reset-action Reset
           button#export-action Export
       section#description
