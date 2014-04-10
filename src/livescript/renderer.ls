@@ -1,6 +1,6 @@
 ($, algorithm) <- define <[ jquery ./algorithm ]>
 
-const zoom-default = 3.4
+const zoom-default = 2.6
 render-id = 0
 stopping = false
 

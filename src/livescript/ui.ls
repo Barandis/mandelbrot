@@ -8,7 +8,7 @@ const defaults =
   supersamples: 0
   depth: 50
   auto-depth: true
-  palette: 2
+  palette: 1
   update: 100
 
 canvas = $ \#mandelbrot .get 0
@@ -59,7 +59,8 @@ init = !->
     renderer.render canvas, ctx, img, options
 
   $ \#export-action .click !->
-    window.location = canvas.to-data-URL \image/png
+    features = "width=#{canvas.width},height=#{canvas.height},location=no"
+    window.open (canvas.to-data-URL \image/png), "Mandelbrot Set Export", features 
 
   check-disabled = !->
     $ \#depth .prop \disabled, ($ @ .is \:checked)
