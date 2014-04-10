@@ -7,7 +7,7 @@
       im: 0.0,
       zoom: 1.0,
       escape: 2.0,
-      supersamples: 1,
+      supersamples: 0,
       depth: 50,
       autoDepth: true,
       palette: 2,
@@ -49,6 +49,9 @@
         fillOptionsFromSettings();
         renderer.render(canvas, ctx, img, options);
       });
+      $('#stop-action').click(function(){
+        renderer.stop();
+      });
       $('#reset-action').click(function(){
         options = clone$(defaults);
         renderer.render(canvas, ctx, img, options);
@@ -73,36 +76,36 @@
     };
     fillOptionsFromUrl = function(){
       var params, i$, len$, param, ref$, key, value;
-      params = split$.call(window.location.hash, '&');
+      params = split$.call(window.location.hash.substring(1), '&');
       for (i$ = 0, len$ = params.length; i$ < len$; ++i$) {
         param = params[i$];
         ref$ = split$.call(param, '='), key = ref$[0], value = ref$[1];
         switch (key) {
-        case '#re':
+        case 'r':
           options.re = parseFloat(value);
           break;
-        case 'im':
+        case 'i':
           options.im = parseFloat(value);
           break;
-        case 'zoom':
+        case 'z':
           options.zoom = parseFloat(value);
           break;
-        case 'escape':
+        case 'e':
           options.escape = parseFloat(value);
           break;
-        case 'supersamples':
+        case 's':
           options.supersamples = parseInt(value);
           break;
-        case 'depth':
+        case 'd':
           options.depth = parseInt(value);
           break;
-        case 'auto-depth':
+        case 'a':
           options.autoDepth = value === '1';
           break;
-        case 'palette':
+        case 'p':
           options.palette = parseInt(value);
           break;
-        case 'update':
+        case 'u':
           options.update = parseInt(value);
         }
       }
@@ -113,7 +116,7 @@
       im = $.trim($('#im').val());
       zoom = $.trim($('#zoom').val());
       escape = $.trim($('#escape').val());
-      supersamples = $.trim($('#supersamples').val());
+      supersamples = parseInt($('#supersamples').val());
       depth = $.trim($('#depth').val());
       autoDepth = $('#auto-depth').is(':checked');
       palette = parseInt($('#palette').val());
@@ -130,9 +133,7 @@
       if (escape) {
         options.escape = parseFloat(escape);
       }
-      if (supersamples) {
-        options.supersamples = parseInt(supersamples);
-      }
+      options.supersamples = supersamples;
       if (depth) {
         options.depth = parseInt(depth);
       }

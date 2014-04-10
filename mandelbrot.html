@@ -63,8 +63,14 @@
           </select>
         </div>
         <div>
-          <label for="supersamples">Supersamples:</label>
-          <input id="supersamples" type="text">
+          <label for="supersamples">Anti-aliasing:</label>
+          <select id="supersamples">
+            <option value="0">None</option>
+            <option value="2">2x</option>
+            <option value="4">4x</option>
+            <option value="8">8x</option>
+            <option value="16">16x</option>
+          </select>
         </div>
         <div>
           <label for="update">Update timeout:</label>
@@ -72,6 +78,7 @@
         </div>
         <div>
           <button id="draw-action">Render</button>
+          <button id="stop-action">Stop</button>
           <button id="reset-action">Reset</button>
           <button id="export-action">Export</button>
         </div>
