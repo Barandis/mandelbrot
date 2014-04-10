@@ -11,7 +11,8 @@
       depth: 50,
       autoDepth: true,
       palette: 1,
-      update: 100
+      update: 100,
+      continuous: true
     };
     canvas = $('#mandelbrot').get(0);
     options = clone$(defaults);
@@ -113,11 +114,14 @@
           break;
         case 'u':
           options.update = parseInt(value);
+          break;
+        case 'c':
+          options.continuous = value === '1';
         }
       }
     };
     fillOptionsFromSettings = function(){
-      var re, im, zoom, escape, supersamples, depth, autoDepth, palette, update;
+      var re, im, zoom, escape, supersamples, depth, autoDepth, palette, update, continuous;
       re = $.trim($('#re').val());
       im = $.trim($('#im').val());
       zoom = $.trim($('#zoom').val());
@@ -127,6 +131,7 @@
       autoDepth = $('#auto-depth').is(':checked');
       palette = parseInt($('#palette').val());
       update = $.trim($('#update').val());
+      continuous = $('#continuous').is(':checked');
       if (re) {
         options.re = parseFloat(re);
       }
@@ -148,6 +153,7 @@
       if (update) {
         options.update = parseInt(update);
       }
+      options.continuous = continuous;
     };
     return {
       init: init
