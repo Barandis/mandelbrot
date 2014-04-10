@@ -1,6 +1,6 @@
 (function(){
   define(function(){
-    var logBase, logHalf, mandelbrot, toRgb, smoothColor, setColor, orangePalette, redPalette, bluePalette, grayPalette, redscalePalette, greenscalePalette, bluescalePalette;
+    var logBase, logHalf, mandelbrot, toRgb, continuousColor, setColor, orangePalette, redPalette, bluePalette, grayPalette, redscalePalette, greenscalePalette, bluescalePalette;
     logBase = 1.0 / Math.log(2.0);
     logHalf = logBase * Math.log(0.5);
     mandelbrot = function(cr, ci, escape, depth, hist){
@@ -58,38 +58,38 @@
       rgb[2] *= 255;
       return rgb;
     };
-    smoothColor = function(depth, n, tr, ti){
-      return 1 + n - logHalf - logBase * Math.log(Math.log(tr + ti));
+    continuousColor = function(depth, n, tr, ti){
+      return n + 5 - logHalf - logBase * Math.log(Math.log(tr + ti));
     };
     setColor = [0, 0, 0, 255];
-    orangePalette = function(depth, n, tr, ti){
+    orangePalette = function(depth, n, tr, ti, continuous){
       var v, c;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         c = toRgb(360.0 * v / depth, 1.0, 1.0);
         c.push(255);
         return c;
       }
     };
-    redPalette = function(depth, n, tr, ti){
+    redPalette = function(depth, n, tr, ti, continuous){
       var v, c;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         c = toRgb(360.0 * v / depth, 1.0, 10.0 * v / depth);
         c.push(255);
         return c;
       }
     };
-    bluePalette = function(depth, n, tr, ti){
+    bluePalette = function(depth, n, tr, ti, continuous){
       var v, c, t;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         c = toRgb(360.0 * v / depth, 1.0, 10.0 * v / depth);
         t = c[0];
         c[0] = c[2];
@@ -98,12 +98,12 @@
         return c;
       }
     };
-    grayPalette = function(depth, n, tr, ti){
+    grayPalette = function(depth, n, tr, ti, continuous){
       var v;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         v = Math.floor(512.0 * v / depth);
         if (v > 255) {
           v = 255;
@@ -111,12 +111,12 @@
         return [v, v, v, 255];
       }
     };
-    redscalePalette = function(depth, n, tr, ti){
+    redscalePalette = function(depth, n, tr, ti, continuous){
       var v;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         v = Math.floor(512.0 * v / depth);
         if (v > 255) {
           v = 255;
@@ -124,12 +124,12 @@
         return [v, 0, 0, 255];
       }
     };
-    greenscalePalette = function(depth, n, tr, ti){
+    greenscalePalette = function(depth, n, tr, ti, continuous){
       var v;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         v = Math.floor(512.0 * v / depth);
         if (v > 255) {
           v = 255;
@@ -137,12 +137,12 @@
         return [0, v, 0, 255];
       }
     };
-    bluescalePalette = function(depth, n, tr, ti){
+    bluescalePalette = function(depth, n, tr, ti, continuous){
       var v;
       if (depth === n) {
         return setColor;
       } else {
-        v = smoothColor(depth, n, tr, ti);
+        v = continuous ? continuousColor(depth, n, tr, ti) : n;
         v = Math.floor(512.0 * v / depth);
         if (v > 255) {
           v = 255;

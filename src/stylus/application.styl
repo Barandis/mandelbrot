@@ -2,6 +2,7 @@
 
 semi-transparent = rgba(30, 30, 30, 0.5)
 opaque = #666
+settings-label-width = 40%
 
 body
   background-color black
@@ -70,9 +71,9 @@ input
     text-align center
     border-bottom 1px solid #666
   label
-    display inline-block
-    width 40%
     font-weight bold
+    display inline-block
+    width settings-label-width
 
 #control
   width 8em
@@ -99,19 +100,26 @@ input
     border-top 1px solid #666
   section#inputs
     padding 5px
-    div:last-child
+    .buttons
       text-align center
       padding-top 5px
       button
         width 6em
     select
       width 14em
-    input[type="text"]
-      width 13em
-    input#depth
+    input
+      &[type="text"]
+        width 13em
+      &[type="checkbox"] + label
+        display inline
+    #depth
       width 6em
-    label[for="auto-depth"]
-      display inline
+    .coloring
+      margin-top 0.4em
+      > label
+        float left
+      > div
+        margin-left settings-label-width
 
 #render
   width 18em

@@ -65,7 +65,18 @@ html.no-js(lang="en")
         div
           label(for="update") Update timeout:
           input#update(type="text")
-        div
+        div.coloring
+          label Coloring options:
+          div
+              input#continuous(type="checkbox") 
+              label(for="continuous") Continuous coloring
+            div
+              input#histogram(type="checkbox")
+              label(for="histogram") Histogram coloring
+            div
+              input#normalized(type="checkbox")
+              label(for="normalized") Normalized coloring
+        div.buttons
           button#draw-action Render
           button#stop-action Stop
           button#reset-action Reset

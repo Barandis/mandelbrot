@@ -22,10 +22,10 @@ render = (canvas, ctx, img, options) !->
 
   draw-line = (cr-start, ci, offset = 0) !->
     cr = cr-start
-    { escape, depth } = options
+    { escape, depth, continuous } = options
     for from 0 to canvas.width
       p = algorithm.mandelbrot cr, ci, escape, depth
-      color = palette depth, p.0, p.1, p.2
+      color = palette depth, p.0, p.1, p.2, continuous
 
       img.data[offset++] = color.0
       img.data[offset++] = color.1
@@ -36,14 +36,14 @@ render = (canvas, ctx, img, options) !->
 
   draw-supersampled-line = (cr-start, ci, offset = 0) !->
     cr = cr-start
-    { escape, depth, supersamples } = options
+    { escape, depth, supersamples, continuous } = options
     for from 0 to canvas.width
       color = [0, 0, 0, 255]
       for from 0 to supersamples
         rx = Math.random! * dr
         ry = Math.random! * di
         p = algorithm.mandelbrot cr - rx / 2, ci - ry / 2, escape, depth
-        add-rgb color, palette(depth, p.0, p.1, p.2)
+        add-rgb color, palette(depth, p.0, p.1, p.2, continuous)
       div-rgb color, supersamples
 
       img.data[offset++] = color.0
@@ -120,22 +120,25 @@ adjust-aspect-ratio = (zoom) !->
   else zoom.1 *= range-ratio / screen-ratio
 
 update-url = (options) !->
-  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update } = options
+  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
   ad = if auto-depth then 1 else 0
-  window.location.hash = "r=#re&i=#im&z=#zoom&e=#escape&d=#depth&a=#ad&s=#supersamples&p=#palette&u=#update"
+  cn = if continuous then 1 else 0
+  window.location.hash = "r=#re&i=#im&z=#zoom&e=#escape&d=#depth&a=#ad
+                          &s=#supersamples&p=#palette&u=#update&c=#cn"
 
 update-info = (options, re-range, im-range) !->
-  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update } = options
+  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
   $ \#re .val re
   $ \#im .val im
   $ \#zoom .val zoom
   $ \#escape .val escape
   $ \#depth .val depth
   $ \#update .val update
-
-  $ \#auto-depth .prop \checked, auto-depth
   $ \#palette .val palette
   $ \#supersamples .val supersamples
+
+  $ \#auto-depth .prop \checked, auto-depth
+  $ \#continuous .prop \checked, continuous
 
   [rmin, rmax] = re-range
   [imin, imax] = im-range

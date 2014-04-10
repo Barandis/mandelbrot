@@ -76,7 +76,22 @@
           <label for="update">Update timeout:</label>
           <input id="update" type="text">
         </div>
-        <div>
+        <div class="coloring">
+          <label>Coloring options:</label>
+          <div>
+            <input id="continuous" type="checkbox">
+            <label for="continuous">Continuous coloring</label>
+          </div>
+          <div>
+            <input id="histogram" type="checkbox">
+            <label for="histogram">Histogram coloring</label>
+          </div>
+          <div>
+            <input id="normalized" type="checkbox">
+            <label for="normalized">Normalized coloring</label>
+          </div>
+        </div>
+        <div class="buttons">
           <button id="draw-action">Render</button>
           <button id="stop-action">Stop</button>
           <button id="reset-action">Reset</button>

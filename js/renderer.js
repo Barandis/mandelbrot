@@ -19,13 +19,13 @@
       updateInfo(options, rRange, iRange);
       renderId++;
       drawLine = function(crStart, ci, offset){
-        var cr, escape, depth, i$, to$, p, color;
+        var cr, escape, depth, continuous, i$, to$, p, color;
         offset == null && (offset = 0);
         cr = crStart;
-        escape = options.escape, depth = options.depth;
+        escape = options.escape, depth = options.depth, continuous = options.continuous;
         for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
           p = algorithm.mandelbrot(cr, ci, escape, depth);
-          color = palette(depth, p[0], p[1], p[2]);
+          color = palette(depth, p[0], p[1], p[2], continuous);
           img.data[offset++] = color[0];
           img.data[offset++] = color[1];
           img.data[offset++] = color[2];
@@ -34,17 +34,17 @@
         }
       };
       drawSupersampledLine = function(crStart, ci, offset){
-        var cr, escape, depth, supersamples, i$, to$, color, j$, rx, ry, p;
+        var cr, escape, depth, supersamples, continuous, i$, to$, color, j$, rx, ry, p;
         offset == null && (offset = 0);
         cr = crStart;
-        escape = options.escape, depth = options.depth, supersamples = options.supersamples;
+        escape = options.escape, depth = options.depth, supersamples = options.supersamples, continuous = options.continuous;
         for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
           color = [0, 0, 0, 255];
           for (j$ = 0; j$ <= supersamples; ++j$) {
             rx = Math.random() * dr;
             ry = Math.random() * di;
             p = algorithm.mandelbrot(cr - rx / 2, ci - ry / 2, escape, depth);
-            addRgb(color, palette(depth, p[0], p[1], p[2]));
+            addRgb(color, palette(depth, p[0], p[1], p[2], continuous));
           }
           divRgb(color, supersamples);
           img.data[offset++] = color[0];
@@ -125,23 +125,25 @@
       }
     };
     updateUrl = function(options){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, ad;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update;
+      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous, ad, cn;
+      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
       ad = autoDepth ? 1 : 0;
-      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + ad + "&s=" + supersamples + "&p=" + palette + "&u=" + update;
+      cn = continuous ? 1 : 0;
+      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + ad + "&s=" + supersamples + "&p=" + palette + "&u=" + update + "&c=" + cn;
     };
     updateInfo = function(options, reRange, imRange){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, rmin, rmax, imin, imax, horiz, vert;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update;
+      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous, rmin, rmax, imin, imax, horiz, vert;
+      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
       $('#re').val(re);
       $('#im').val(im);
       $('#zoom').val(zoom);
       $('#escape').val(escape);
       $('#depth').val(depth);
       $('#update').val(update);
-      $('#auto-depth').prop('checked', autoDepth);
       $('#palette').val(palette);
       $('#supersamples').val(supersamples);
+      $('#auto-depth').prop('checked', autoDepth);
+      $('#continuous').prop('checked', continuous);
       rmin = reRange[0], rmax = reRange[1];
       imin = imRange[0], imax = imRange[1];
       horiz = Math.abs(rmin - rmax);

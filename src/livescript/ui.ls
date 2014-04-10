@@ -10,6 +10,7 @@ const defaults =
   auto-depth: true
   palette: 1
   update: 100
+  continuous: true
 
 canvas = $ \#mandelbrot .get 0
 options = ^^defaults
@@ -93,6 +94,7 @@ fill-options-from-url = !->
     | \a            => options.auto-depth = value is \1
     | \p            => options.palette = parse-int value
     | \u            => options.update = parse-int value
+    | \c            => options.continuous = value is \1
 
 fill-options-from-settings = !->
   re                  = $.trim ($ \#re .val!)
@@ -104,6 +106,7 @@ fill-options-from-settings = !->
   auto-depth          = $ \#auto-depth .is \:checked
   palette             = parse-int ($ \#palette .val!)
   update              = $.trim ($ \#update .val!)
+  continuous          = $ \#continuous .is \:checked
 
   options.re = parse-float re if re
   options.im = parse-float im if im
@@ -114,5 +117,6 @@ fill-options-from-settings = !->
   options.auto-depth = auto-depth
   options.palette = palette
   options.update = parse-int update if update
+  options.continuous = continuous
 
 { init }

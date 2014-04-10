@@ -92,31 +92,31 @@ to-rgb = (h, s, v) ->
 
   rgb
 
-smooth-color = (depth, n, tr, ti) ->
-  1 + n - log-half - log-base * Math.log Math.log tr + ti
+continuous-color = (depth, n, tr, ti) ->
+  n + 5 - log-half - log-base * Math.log Math.log tr + ti
 
 const set-color = [0, 0, 0, 255]
 
-orange-palette = (depth, n, tr, ti) ->
+orange-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     c = to-rgb 360.0 * v / depth, 1.0, 1.0
     c.push 255
     c
 
-red-palette = (depth, n, tr, ti) ->
+red-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     c = to-rgb 360.0 * v / depth, 1.0, 10.0 * v / depth
     c.push 255
     c
 
-blue-palette = (depth, n, tr, ti) ->
+blue-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else 
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     c = to-rgb 360.0 * v / depth, 1.0, 10.0 * v / depth
     t = c.0
     c.0 = c.2
@@ -124,34 +124,34 @@ blue-palette = (depth, n, tr, ti) ->
     c.push 255
     c
 
-gray-palette = (depth, n, tr, ti) ->
+gray-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else 
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     v = Math.floor 512.0 * v / depth
     v = 255 if v > 255
     [v, v, v, 255]
 
-redscale-palette = (depth, n, tr, ti) ->
+redscale-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else 
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     v = Math.floor 512.0 * v / depth
     v = 255 if v > 255
     [v, 0, 0, 255]
 
-greenscale-palette = (depth, n, tr, ti) ->
+greenscale-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else 
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     v = Math.floor 512.0 * v / depth
     v = 255 if v > 255
     [0, v, 0, 255]
 
-bluescale-palette = (depth, n, tr, ti) ->
+bluescale-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else 
-    v = smooth-color depth, n, tr, ti
+    v = if continuous then continuous-color depth, n, tr, ti else n
     v = Math.floor 512.0 * v / depth
     v = 255 if v > 255
     [0, 0, v, 255]
