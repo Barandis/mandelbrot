@@ -21,6 +21,10 @@
         initCanvas();
         renderer.render(canvas, ctx, img, options);
       });
+      $(window).on('hashchange', function(){
+        fillOptionsFromUrl();
+        renderer.render(canvas, ctx, img, options);
+      });
       $('#mandelbrot').click(function(event){
         var x, y, ref$, r, i, dx, dy;
         x = event.clientX;

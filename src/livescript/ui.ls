@@ -21,6 +21,10 @@ init = !->
     init-canvas!
     renderer.render canvas, ctx, img, options
 
+  $ window .on \hashchange !->
+    fill-options-from-url!
+    renderer.render canvas, ctx, img, options
+
   $ \#mandelbrot .click (event) !->
     x = event.client-x
     y = event.client-y
