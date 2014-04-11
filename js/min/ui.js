@@ -1,1 +1,24 @@
+/*!
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2014 Thomas J. Otterson
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 (function(){function a(a){function b(){}return b.prototype=a,new b}var b="".split;define(["jquery","./renderer"],function(c,d){var e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t;return e={re:-.7,im:0,zoom:1,escape:2,supersamples:0,depth:50,autoDepth:!0,palette:0,update:100,continuous:!0},f=c("#mandelbrot").get(0),g=a(e),j=function(){c(window).resize(function(){k(),o()}),c(window).on("hashchange",function(){p(),o()}),c("#mandelbrot").click(function(a){var b,c,e,h,i,j,k;b=a.clientX,c=a.clientY,e=d.getRange(g),h=e[0],i=e[1],j=(h[1]-h[0])/f.width,k=(i[1]-i[0])/f.height,g.re=h[0]+b*j,g.im=i[0]+c*k,a.shiftKey?g.zoom/=2:a.ctrlKey||(g.zoom*=2),o()}),c("#control").click(function(){var a;a=c(this),c("#settings").toggle(500),c("#render").toggle(500),c("#domain").toggle(500),a.text("Hide Panels"===a.text()?"Show Panels":"Hide Panels")}),c("#draw-action").click(function(){q(),o()}),c("#stop-action").click(function(){d.stop()}),c("#reset-action").click(function(){g=a(e),o()}),c("#export-action").click(function(){var a;a="width="+f.width+",height="+f.height+",location=no",window.open(f.toDataURL("image/png"),"Mandelbrot Set Export",a)}),c("#auto-depth").change(n),k(),p(),n(),o()},k=function(){f.width=window.innerWidth,f.height=window.innerHeight,h=f.getContext("2d"),i=h.createImageData(f.width,1)},l=function(){c("#draw-action").prop("disabled",!1),c("#stop-action").prop("disabled",!0),c("#reset-action").prop("disabled",!1),c("#export-action").prop("disabled",!1)},m=function(){c("#draw-action").prop("disabled",!0),c("#stop-action").prop("disabled",!1),c("#reset-action").prop("disabled",!0),c("#export-action").prop("disabled",!0)},n=function(){c("#depth").prop("disabled",c("#auto-depth").is(":checked"))},o=function(){n(),d.render(f,h,i,g,m,l)},p=function(){var a,c,d,e,f,h,i;for(a=b.call(window.location.hash.substring(1),"&"),c=0,d=a.length;d>c;++c)switch(e=a[c],f=b.call(e,"="),h=f[0],i=f[1],h){case"r":g.re=parseFloat(i);break;case"i":g.im=parseFloat(i);break;case"z":g.zoom=parseFloat(i);break;case"e":g.escape=parseFloat(i);break;case"s":g.supersamples=parseInt(i);break;case"d":g.depth=parseInt(i);break;case"a":g.autoDepth="1"===i;break;case"p":g.palette=parseInt(i);break;case"u":g.update=parseInt(i);break;case"c":g.continuous="1"===i}t(),s()},q=function(){var a,b,d,e,f,h,i,j,k,l;a=c.trim(c("#re").val()),b=c.trim(c("#im").val()),d=c.trim(c("#zoom").val()),e=c.trim(c("#escape").val()),f=parseInt(c("#supersamples").val()),h=c.trim(c("#depth").val()),i=c("#auto-depth").is(":checked"),j=parseInt(c("#palette").val()),k=c.trim(c("#update").val()),l=c("#continuous").is(":checked"),a&&(g.re=parseFloat(a)),b&&(g.im=parseFloat(b)),d&&(g.zoom=parseFloat(d)),e&&(g.escape=parseFloat(e)),g.supersamples=f,h&&(g.depth=parseInt(h)),g.autoDepth=i,g.palette=j,k&&(g.update=parseInt(k)),g.continuous=l,t(),r()},r=function(){var a,b,c,d,e,f,h,i,j,k;a=g.re,b=g.im,c=g.zoom,d=g.escape,e=g.depth,f=g.autoDepth,h=g.supersamples,i=g.palette,j=g.update,k=g.continuous,f=f?1:0,k=k?1:0,window.location.hash="r="+a+"&i="+b+"&z="+c+"&e="+d+"&d="+e+"&a="+f+"&s="+h+"&p="+i+"&u="+j+"&c="+k},s=function(){var a,b,d,e,f,h,i,j,k,l;a=g.re,b=g.im,d=g.zoom,e=g.escape,f=g.depth,h=g.autoDepth,i=g.supersamples,j=g.palette,k=g.update,l=g.continuous,c("#re").val(a),c("#im").val(b),c("#zoom").val(d),c("#escape").val(e),c("#depth").val(f),c("#update").val(k),c("#palette").val(j),c("#supersamples").val(i),c("#auto-depth").prop("checked",h),c("#continuous").prop("checked",l)},t=function(){var a,b,c,e;g.autoDepth&&(a=d.getRange(g),b=a[0],c=a[1],e=Math.sqrt(.001+2*Math.min(Math.abs(b[0]-b[1]),Math.abs(c[0]-c[1]))),g.depth=Math.floor(223/e))},{init:j}})}).call(this);

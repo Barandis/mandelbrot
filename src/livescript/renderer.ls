@@ -1,4 +1,28 @@
-($, algorithm) <- define <[ jquery ./algorithm ]>
+/*!
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2014 Thomas J. Otterson
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+($, mandelbrot) <- define <[ jquery ./mandelbrot ]>
 
 const zoom-default = 2.6
 const gray-palette = 2
@@ -9,8 +33,7 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
   stopping := false
   [r-range, i-range] = get-range options
   
-  palette = algorithm.palettes[options.palette]
-  draft-palette = algorithm.palettes[gray-palette]
+  compute = mandelbrot.calculator options.palette, options.escape, options.depth, options.continuous
 
   dr = (r-range.1 - r-range.0) / (canvas.width - 0.5)
   di = (i-range.1 - i-range.0) / (canvas.height - 0.5)
@@ -20,12 +43,8 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
 
   draw-line = (cr-start, ci, offset = 0) !->
     cr = cr-start
-    { escape, depth, continuous } = options
     for from 0 to canvas.width
-      p = algorithm.mandelbrot cr, ci, escape, depth
-      color = palette p.0, p.1, p.2, depth, continuous
-
-      if not color then console.log { p, min-value, max-value }
+      color = compute cr, ci
 
       img.data[offset++] = color.0
       img.data[offset++] = color.1
@@ -36,15 +55,13 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
 
   draw-supersampled-line = (cr-start, ci, offset = 0) !->
     cr = cr-start
-    { escape, depth, supersamples, continuous } = options
     for from 0 to canvas.width
       color = [0, 0, 0, 255]
-      for from 0 to supersamples
+      for from 0 to options.supersamples
         rx = Math.random! * dr
         ry = Math.random! * di
-        p = algorithm.mandelbrot cr - rx / 2, ci - ry / 2, escape, depth
-        add-rgb color, palette p.0, p.1, p.2, depth, continuous
-      div-rgb color, supersamples
+        add-rgb color, compute cr - rx / 2, ci - ry / 2
+      div-rgb color, options.supersamples
 
       img.data[offset++] = color.0
       img.data[offset++] = color.1
@@ -63,19 +80,19 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
 
   draw-lines = !->
     start = Date.now!
-    start-height = canvas.height
-    start-width = canvas.width
     last-update = start
+
     pixels = 0
     ci = i-range.0
-    si = 0
-    draw-fn = if options.supersamples > 1 then draw-supersampled-line else draw-line
+    line = 0
     id = render-id
+
+    draw-fn = if options.supersamples > 1 then draw-supersampled-line else draw-line
 
     $ \#size .text "#{canvas.width} x #{canvas.height}"
 
     render-line = !->
-      return if id isnt render-id or start-height isnt canvas.height or start-width isnt canvas.width
+      return if id isnt render-id
       if stopping
         post-cb!
         return
@@ -83,14 +100,14 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
       draw-fn r-range.0, ci
       ci += di
       pixels += canvas.width
-      ctx.put-image-data img, 0, si
+      ctx.put-image-data img, 0, line
 
       now = Date.now!
 
-      if si++ < canvas.height
+      if line++ < canvas.height
         if (now - last-update) >= options.update
           draw-solid-line 0, [255, 59, 3, 255]
-          ctx.put-image-data img, 0, si
+          ctx.put-image-data img, 0, line
 
           elapsed-time = now - start
           $ \#render-time .text (elapsed-time / 1000.0).to-fixed 1

@@ -21,16 +21,4 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-(function(){
-  requirejs.config({
-    baseUrl: 'js',
-    paths: {
-      jquery: 'lib/jquery'
-    }
-  });
-  require(['jquery', './ui'], function($, ui){
-    $(function(){
-      ui.init();
-    });
-  });
-}).call(this);
+(function(){requirejs.config({baseUrl:"js",paths:{jquery:"lib/jquery"}}),require(["jquery","./ui"],function(a,b){a(function(){b.init()})})}).call(this);

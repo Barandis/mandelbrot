@@ -1,35 +1,48 @@
+/*!
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2014 Thomas J. Otterson
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 (function(){
-  define(['jquery', './algorithm'], function($, algorithm){
+  define(['jquery', './mandelbrot'], function($, mandelbrot){
     var zoomDefault, grayPalette, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, getRange, stop;
     zoomDefault = 2.6;
     grayPalette = 2;
     renderId = 0;
     stopping = false;
     render = function(canvas, ctx, img, options, preCb, postCb){
-      var ref$, rRange, iRange, palette, draftPalette, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
+      var ref$, rRange, iRange, compute, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
       stopping = false;
       ref$ = getRange(options), rRange = ref$[0], iRange = ref$[1];
-      palette = algorithm.palettes[options.palette];
-      draftPalette = algorithm.palettes[grayPalette];
+      compute = mandelbrot.calculator(options.palette, options.escape, options.depth, options.continuous);
       dr = (rRange[1] - rRange[0]) / (canvas.width - 0.5);
       di = (iRange[1] - iRange[0]) / (canvas.height - 0.5);
       updateInfo(options, rRange, iRange);
       renderId++;
       drawLine = function(crStart, ci, offset){
-        var cr, escape, depth, continuous, i$, to$, p, color;
+        var cr, i$, to$, color;
         offset == null && (offset = 0);
         cr = crStart;
-        escape = options.escape, depth = options.depth, continuous = options.continuous;
         for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
-          p = algorithm.mandelbrot(cr, ci, escape, depth);
-          color = palette(p[0], p[1], p[2], depth, continuous);
-          if (!color) {
-            console.log({
-              p: p,
-              minValue: minValue,
-              maxValue: maxValue
-            });
-          }
+          color = compute(cr, ci);
           img.data[offset++] = color[0];
           img.data[offset++] = color[1];
           img.data[offset++] = color[2];
@@ -38,19 +51,17 @@
         }
       };
       drawSupersampledLine = function(crStart, ci, offset){
-        var cr, escape, depth, supersamples, continuous, i$, to$, color, j$, rx, ry, p;
+        var cr, i$, to$, color, j$, to1$, rx, ry;
         offset == null && (offset = 0);
         cr = crStart;
-        escape = options.escape, depth = options.depth, supersamples = options.supersamples, continuous = options.continuous;
         for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
           color = [0, 0, 0, 255];
-          for (j$ = 0; j$ <= supersamples; ++j$) {
+          for (j$ = 0, to1$ = options.supersamples; j$ <= to1$; ++j$) {
             rx = Math.random() * dr;
             ry = Math.random() * di;
-            p = algorithm.mandelbrot(cr - rx / 2, ci - ry / 2, escape, depth);
-            addRgb(color, palette(p[0], p[1], p[2], depth, continuous));
+            addRgb(color, compute(cr - rx / 2, ci - ry / 2));
           }
-          divRgb(color, supersamples);
+          divRgb(color, options.supersamples);
           img.data[offset++] = color[0];
           img.data[offset++] = color[1];
           img.data[offset++] = color[2];
@@ -69,20 +80,18 @@
         }
       };
       drawLines = function(){
-        var start, startHeight, startWidth, lastUpdate, pixels, ci, si, drawFn, id, renderLine;
+        var start, lastUpdate, pixels, ci, line, id, drawFn, renderLine;
         start = Date.now();
-        startHeight = canvas.height;
-        startWidth = canvas.width;
         lastUpdate = start;
         pixels = 0;
         ci = iRange[0];
-        si = 0;
-        drawFn = options.supersamples > 1 ? drawSupersampledLine : drawLine;
+        line = 0;
         id = renderId;
+        drawFn = options.supersamples > 1 ? drawSupersampledLine : drawLine;
         $('#size').text(canvas.width + " x " + canvas.height);
         renderLine = function(){
           var now, elapsedTime, speed;
-          if (id !== renderId || startHeight !== canvas.height || startWidth !== canvas.width) {
+          if (id !== renderId) {
             return;
           }
           if (stopping) {
@@ -92,12 +101,12 @@
           drawFn(rRange[0], ci);
           ci += di;
           pixels += canvas.width;
-          ctx.putImageData(img, 0, si);
+          ctx.putImageData(img, 0, line);
           now = Date.now();
-          if (si++ < canvas.height) {
+          if (line++ < canvas.height) {
             if (now - lastUpdate >= options.update) {
               drawSolidLine(0, [255, 59, 3, 255]);
-              ctx.putImageData(img, 0, si);
+              ctx.putImageData(img, 0, line);
               elapsedTime = now - start;
               $('#render-time').text((elapsedTime / 1000.0).toFixed(1));
               speed = 1000 * pixels / elapsedTime;
