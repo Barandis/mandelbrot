@@ -47,13 +47,9 @@ html.no-js(lang="en")
         div
           label(for="palette") Color scheme:
           select#palette
-            option(value="0") Orange
+            option(value="0") Default
             option(value="1") Red
-            option(value="2") Blue
-            option(value="3") Grayscale
-            option(value="4") Redscale
-            option(value="5") Greenscale
-            option(value="6") Bluescale
+            option(value="2") Grayscale
         div
           label(for="supersamples") Anti-aliasing:
           select#supersamples
@@ -71,10 +67,10 @@ html.no-js(lang="en")
               input#continuous(type="checkbox") 
               label(for="continuous") Continuous coloring
             div
-              input#histogram(type="checkbox")
+              input#histogram(type="checkbox", disabled)
               label(for="histogram") Histogram coloring
             div
-              input#normalized(type="checkbox")
+              input#normalized(type="checkbox", disabled)
               label(for="normalized") Normalized coloring
         div.buttons
           button#draw-action Render

@@ -1,6 +1,6 @@
 (function(){
   define(function(){
-    var logBase, logHalf, mandelbrot, toRgb, continuousColor, setColor, orangePalette, redPalette, bluePalette, grayPalette, redscalePalette, greenscalePalette, bluescalePalette;
+    var logBase, logHalf, mandelbrot, toRgb, continuousColor, setColor, orangePalette, redPalette, bluePalette, grayPalette, redscalePalette, greenscalePalette, bluescalePalette, ufColors, ufPalette;
     logBase = 1.0 / Math.log(2.0);
     logHalf = logBase * Math.log(0.5);
     mandelbrot = function(cr, ci, escape, depth, hist){
@@ -150,9 +150,28 @@
         return [0, 0, v, 255];
       }
     };
+    ufColors = [[66, 30, 15], [25, 7, 26], [9, 1, 47], [4, 4, 73], [0, 7, 100], [12, 44, 138], [24, 82, 177], [57, 125, 209], [134, 181, 229], [211, 236, 248], [241, 233, 191], [248, 201, 95], [255, 170, 0], [204, 128, 0], [153, 87, 0], [106, 52, 3]];
+    ufPalette = function(depth, n, tr, ti, continuous){
+      var v, a, b, c1, c2;
+      if (depth === n) {
+        return setColor;
+      } else {
+        if (continuous) {
+          v = 192.0 * continuousColor(depth, n, tr, ti) / depth;
+          a = Math.floor(v) % 16;
+          b = v % 1;
+          c1 = ufColors[a];
+          c2 = ufColors[(a + 1) % 16];
+          return [c1[0] + b * (c2[0] - c1[0]), c1[1] + b * (c2[1] - c1[1]), c1[2] + b * (c2[2] - c1[2])];
+        } else {
+          v = Math.floor(192.0 * n / depth);
+          return ufColors[v % 16];
+        }
+      }
+    };
     return {
       mandelbrot: mandelbrot,
-      palettes: [orangePalette, redPalette, bluePalette, grayPalette, redscalePalette, greenscalePalette, bluescalePalette]
+      palettes: [orangePalette, redPalette, bluePalette, grayPalette, redscalePalette, greenscalePalette, bluescalePalette, ufPalette]
     };
   });
 }).call(this);

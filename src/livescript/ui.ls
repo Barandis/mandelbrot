@@ -8,7 +8,7 @@ const defaults =
   supersamples: 0
   depth: 50
   auto-depth: true
-  palette: 1
+  palette: 0
   update: 100
   continuous: true
 

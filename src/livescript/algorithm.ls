@@ -97,30 +97,29 @@ continuous-color = (depth, n, tr, ti) ->
 
 const set-color = [0, 0, 0, 255]
 
-orange-palette = (depth, n, tr, ti, continuous) ->
-  if depth is n then set-color
-  else
-    v = if continuous then continuous-color depth, n, tr, ti else n
-    c = to-rgb 360.0 * v / depth, 1.0, 1.0
-    c.push 255
-    c
+const uf-colors =
+  [ 66  30  15]
+  [ 25   7  26]
+  [  9   1  47]
+  [  4   4  73]
+  [  0   7 100]
+  [ 12  44 138]
+  [ 24  82 177]
+  [ 57 125 209]
+  [134 181 229]
+  [211 236 248]
+  [241 233 191]
+  [248 201  95]
+  [255 170   0]
+  [204 128   0]
+  [153  87   0]
+  [106  52   3]
 
 red-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
   else
     v = if continuous then continuous-color depth, n, tr, ti else n
     c = to-rgb 360.0 * v / depth, 1.0, 10.0 * v / depth
-    c.push 255
-    c
-
-blue-palette = (depth, n, tr, ti, continuous) ->
-  if depth is n then set-color
-  else 
-    v = if continuous then continuous-color depth, n, tr, ti else n
-    c = to-rgb 360.0 * v / depth, 1.0, 10.0 * v / depth
-    t = c.0
-    c.0 = c.2
-    c.2 = t
     c.push 255
     c
 
@@ -132,38 +131,24 @@ gray-palette = (depth, n, tr, ti, continuous) ->
     v = 255 if v > 255
     [v, v, v, 255]
 
-redscale-palette = (depth, n, tr, ti, continuous) ->
+uf-palette = (depth, n, tr, ti, continuous) ->
   if depth is n then set-color
-  else 
-    v = if continuous then continuous-color depth, n, tr, ti else n
-    v = Math.floor 512.0 * v / depth
-    v = 255 if v > 255
-    [v, 0, 0, 255]
-
-greenscale-palette = (depth, n, tr, ti, continuous) ->
-  if depth is n then set-color
-  else 
-    v = if continuous then continuous-color depth, n, tr, ti else n
-    v = Math.floor 512.0 * v / depth
-    v = 255 if v > 255
-    [0, v, 0, 255]
-
-bluescale-palette = (depth, n, tr, ti, continuous) ->
-  if depth is n then set-color
-  else 
-    v = if continuous then continuous-color depth, n, tr, ti else n
-    v = Math.floor 512.0 * v / depth
-    v = 255 if v > 255
-    [0, 0, v, 255]
+  else
+    if continuous
+      v = 192.0 * (continuous-color depth, n, tr, ti) / depth
+      a = (Math.floor v) % 16
+      b = v % 1
+      c1 = uf-colors[a]
+      c2 = uf-colors[(a + 1) % 16]
+      [c1.0 + b * (c2.0 - c1.0), c1.1 + b * (c2.1 - c1.1), c1.2 + b * (c2.2 - c1.2)]
+    else
+      v = Math.floor 192.0 * n / depth
+      uf-colors[v % 16]
 
 {
   mandelbrot: mandelbrot
   palettes:
-    orange-palette
+    uf-palette
     red-palette
-    blue-palette
     gray-palette
-    redscale-palette
-    greenscale-palette
-    bluescale-palette
 }

@@ -92,9 +92,9 @@ input {
   border-bottom: 1px solid #666;
 }
 .info label {
+  font-weight: bold;
   display: inline-block;
   width: 40%;
-  font-weight: bold;
 }
 #control {
   width: 8em;
@@ -131,11 +131,11 @@ input {
 #settings section#inputs {
   padding: 5px;
 }
-#settings section#inputs div:last-child {
+#settings section#inputs .buttons {
   text-align: center;
   padding-top: 5px;
 }
-#settings section#inputs div:last-child button {
+#settings section#inputs .buttons button {
   width: 6em;
 }
 #settings section#inputs select {
@@ -144,11 +144,20 @@ input {
 #settings section#inputs input[type="text"] {
   width: 13em;
 }
-#settings section#inputs input#depth {
+#settings section#inputs input[type="checkbox"] + label {
+  display: inline;
+}
+#settings section#inputs #depth {
   width: 6em;
 }
-#settings section#inputs label[for="auto-depth"] {
-  display: inline;
+#settings section#inputs .coloring {
+  margin-top: 0.4em;
+}
+#settings section#inputs .coloring > label {
+  float: left;
+}
+#settings section#inputs .coloring > div {
+  margin-left: 40%;
 }
 #render {
   width: 18em;
