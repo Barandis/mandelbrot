@@ -73,7 +73,11 @@
         $('#size').text(canvas.width + " x " + canvas.height);
         renderLine = function(){
           var now, elapsedTime, speed;
-          if (stopping || id !== renderId || startHeight !== canvas.height || startWidth !== canvas.width) {
+          if (id !== renderId || startHeight !== canvas.height || startWidth !== canvas.width) {
+            return;
+          }
+          if (stopping) {
+            postCb();
             return;
           }
           drawFn(rRange[0], ci);
