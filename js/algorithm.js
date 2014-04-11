@@ -1,11 +1,10 @@
 (function(){
   define(function(){
-    var logBase, logHalf, mandelbrot, toRgb, continuousColor, setColor, ufColors, palettes;
+    var logBase, logHalf, mandelbrot, toRgb, smooth, setColor, ufColors, palettes;
     logBase = 1.0 / Math.log(2.0);
     logHalf = logBase * Math.log(0.5);
-    mandelbrot = function(cr, ci, escape, depth, hist){
+    mandelbrot = function(cr, ci, escape, depth){
       var zr, zi, tr, ti, n, d, i$;
-      hist == null && (hist = null);
       zr = zi = tr = ti = n = 0;
       d = escape * escape;
       while (n < depth && tr + ti <= d) {
@@ -58,8 +57,8 @@
       rgb[2] *= 255;
       return rgb;
     };
-    continuousColor = function(depth, n, tr, ti){
-      return n + 5 - logHalf - logBase * Math.log(Math.log(tr + ti));
+    smooth = function(n, tr, ti){
+      return 1 + n - logHalf - logBase * Math.log(Math.log(tr + ti));
     };
     setColor = [0, 0, 0, 255];
     ufColors = [[66, 30, 15], [25, 7, 26], [9, 1, 47], [4, 4, 73], [0, 7, 100], [12, 44, 138], [24, 82, 177], [57, 125, 209], [134, 181, 229], [211, 236, 248], [241, 233, 191], [248, 201, 95], [255, 170, 0], [204, 128, 0], [153, 87, 0], [106, 52, 3]];
@@ -70,7 +69,10 @@
           return setColor;
         } else {
           if (continuous) {
-            v = 192.0 * continuousColor(depth, n, tr, ti) / depth;
+            v = 192.0 * smooth(n, tr, ti) / depth;
+            if (v < 0.0) {
+              v = 0.0;
+            }
             a = Math.floor(v) % 16;
             b = v % 1;
             c1 = ufColors[a];
@@ -86,7 +88,7 @@
         if (depth === n) {
           return setColor;
         } else {
-          v = continuous ? continuousColor(depth, n, tr, ti) : n;
+          v = continuous ? smooth(n, tr, ti) : n;
           c = toRgb(360.0 * v / depth, 1.0, 10.0 * v / depth);
           c.push(255);
           return c;
@@ -96,7 +98,7 @@
         if (depth === n) {
           return setColor;
         } else {
-          v = continuous ? continuousColor(depth, n, tr, ti) : n;
+          v = continuous ? smooth(n, tr, ti) : n;
           v = Math.floor(512.0 * v / depth);
           if (v > 255) {
             v = 255;

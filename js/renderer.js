@@ -1,14 +1,16 @@
 (function(){
   define(['jquery', './algorithm'], function($, algorithm){
-    var zoomDefault, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, getRange, stop;
+    var zoomDefault, grayPalette, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, getRange, stop;
     zoomDefault = 2.6;
+    grayPalette = 2;
     renderId = 0;
     stopping = false;
     render = function(canvas, ctx, img, options, preCb, postCb){
-      var ref$, rRange, iRange, palette, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
+      var ref$, rRange, iRange, palette, draftPalette, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
       stopping = false;
       ref$ = getRange(options), rRange = ref$[0], iRange = ref$[1];
       palette = algorithm.palettes[options.palette];
+      draftPalette = algorithm.palettes[grayPalette];
       dr = (rRange[1] - rRange[0]) / (canvas.width - 0.5);
       di = (iRange[1] - iRange[0]) / (canvas.height - 0.5);
       updateInfo(options, rRange, iRange);
@@ -21,6 +23,13 @@
         for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
           p = algorithm.mandelbrot(cr, ci, escape, depth);
           color = palette(p[0], p[1], p[2], depth, continuous);
+          if (!color) {
+            console.log({
+              p: p,
+              minValue: minValue,
+              maxValue: maxValue
+            });
+          }
           img.data[offset++] = color[0];
           img.data[offset++] = color[1];
           img.data[offset++] = color[2];
