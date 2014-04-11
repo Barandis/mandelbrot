@@ -1,7 +1,7 @@
 (function(){
   var split$ = ''.split;
   define(['jquery', './renderer'], function($, renderer){
-    var defaults, canvas, options, ctx, img, init, initCanvas, fillOptionsFromUrl, fillOptionsFromSettings;
+    var defaults, canvas, options, ctx, img, init, initCanvas, setRenderButtons, setStopButtons, disableDepth, render, fillOptionsFromUrl, fillOptionsFromSettings, fillUrlFromOptions, fillSettingsFromOptions, computeAutoDepth;
     defaults = {
       re: -0.7,
       im: 0.0,
@@ -17,14 +17,13 @@
     canvas = $('#mandelbrot').get(0);
     options = clone$(defaults);
     init = function(){
-      var checkDisabled;
       $(window).resize(function(){
         initCanvas();
-        renderer.render(canvas, ctx, img, options);
+        render();
       });
       $(window).on('hashchange', function(){
         fillOptionsFromUrl();
-        renderer.render(canvas, ctx, img, options);
+        render();
       });
       $('#mandelbrot').click(function(event){
         var x, y, ref$, r, i, dx, dy;
@@ -40,7 +39,7 @@
         } else if (!event.ctrlKey) {
           options.zoom *= 2;
         }
-        renderer.render(canvas, ctx, img, options);
+        render();
       });
       $('#control').click(function(){
         var $this;
@@ -52,34 +51,50 @@
       });
       $('#draw-action').click(function(){
         fillOptionsFromSettings();
-        renderer.render(canvas, ctx, img, options);
+        render();
       });
       $('#stop-action').click(function(){
         renderer.stop();
       });
       $('#reset-action').click(function(){
         options = clone$(defaults);
-        renderer.render(canvas, ctx, img, options);
+        render();
       });
       $('#export-action').click(function(){
         var features;
         features = "width=" + canvas.width + ",height=" + canvas.height + ",location=no";
         window.open(canvas.toDataURL('image/png'), "Mandelbrot Set Export", features);
       });
-      checkDisabled = function(){
-        $('#depth').prop('disabled', $(this).is(':checked'));
-      };
-      $('#auto-depth').change(checkDisabled);
-      checkDisabled();
+      $('#auto-depth').change(disableDepth);
       initCanvas();
       fillOptionsFromUrl();
-      renderer.render(canvas, ctx, img, options);
+      disableDepth();
+      render();
     };
     initCanvas = function(){
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       ctx = canvas.getContext('2d');
       img = ctx.createImageData(canvas.width, 1);
+    };
+    setRenderButtons = function(){
+      $('#draw-action').prop('disabled', false);
+      $('#stop-action').prop('disabled', true);
+      $('#reset-action').prop('disabled', false);
+      $('#export-action').prop('disabled', false);
+    };
+    setStopButtons = function(){
+      $('#draw-action').prop('disabled', true);
+      $('#stop-action').prop('disabled', false);
+      $('#reset-action').prop('disabled', true);
+      $('#export-action').prop('disabled', true);
+    };
+    disableDepth = function(){
+      $('#depth').prop('disabled', $('#auto-depth').is(':checked'));
+    };
+    render = function(){
+      disableDepth();
+      renderer.render(canvas, ctx, img, options, setStopButtons, setRenderButtons);
     };
     fillOptionsFromUrl = function(){
       var params, i$, len$, param, ref$, key, value;
@@ -119,6 +134,8 @@
           options.continuous = value === '1';
         }
       }
+      computeAutoDepth();
+      fillSettingsFromOptions();
     };
     fillOptionsFromSettings = function(){
       var re, im, zoom, escape, supersamples, depth, autoDepth, palette, update, continuous;
@@ -154,6 +171,37 @@
         options.update = parseInt(update);
       }
       options.continuous = continuous;
+      computeAutoDepth();
+      fillUrlFromOptions();
+    };
+    fillUrlFromOptions = function(){
+      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous;
+      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
+      autoDepth = autoDepth ? 1 : 0;
+      continuous = continuous ? 1 : 0;
+      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + autoDepth + "&s=" + supersamples + "&p=" + palette + "&u=" + update + "&c=" + continuous;
+    };
+    fillSettingsFromOptions = function(){
+      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous;
+      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
+      $('#re').val(re);
+      $('#im').val(im);
+      $('#zoom').val(zoom);
+      $('#escape').val(escape);
+      $('#depth').val(depth);
+      $('#update').val(update);
+      $('#palette').val(palette);
+      $('#supersamples').val(supersamples);
+      $('#auto-depth').prop('checked', autoDepth);
+      $('#continuous').prop('checked', continuous);
+    };
+    computeAutoDepth = function(){
+      var ref$, rRange, iRange, factor;
+      if (options.autoDepth) {
+        ref$ = renderer.getRange(options), rRange = ref$[0], iRange = ref$[1];
+        factor = Math.sqrt(0.001 + 2.0 * Math.min(Math.abs(rRange[0] - rRange[1]), Math.abs(iRange[0] - iRange[1])));
+        options.depth = Math.floor(223.0 / factor);
+      }
     };
     return {
       init: init
