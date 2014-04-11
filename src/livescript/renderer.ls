@@ -1,6 +1,7 @@
 ($, algorithm) <- define <[ jquery ./algorithm ]>
 
 const zoom-default = 2.6
+const gray-palette = 2
 render-id = 0
 stopping = false
 
@@ -9,6 +10,7 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
   [r-range, i-range] = get-range options
   
   palette = algorithm.palettes[options.palette]
+  draft-palette = algorithm.palettes[gray-palette]
 
   dr = (r-range.1 - r-range.0) / (canvas.width - 0.5)
   di = (i-range.1 - i-range.0) / (canvas.height - 0.5)
@@ -22,6 +24,8 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
     for from 0 to canvas.width
       p = algorithm.mandelbrot cr, ci, escape, depth
       color = palette p.0, p.1, p.2, depth, continuous
+
+      if not color then console.log { p, min-value, max-value }
 
       img.data[offset++] = color.0
       img.data[offset++] = color.1
@@ -75,7 +79,7 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
       if stopping
         post-cb!
         return
-      
+
       draw-fn r-range.0, ci
       ci += di
       pixels += canvas.width

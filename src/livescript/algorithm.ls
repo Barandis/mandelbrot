@@ -45,7 +45,7 @@ log-half = log-base * Math.log 0.5
 #
 # See http://linas.org/art-gallery/escape/math.html for some good explanations
 # of this escape time method (and, relatedly, of smooth coloring).
-mandelbrot = (cr, ci, escape, depth, hist = null) ->
+mandelbrot = (cr, ci, escape, depth) ->
   zr = zi = tr = ti = n = 0
   d = escape * escape
   while n < depth and (tr + ti) <= d
@@ -92,8 +92,8 @@ to-rgb = (h, s, v) ->
 
   rgb
 
-continuous-color = (depth, n, tr, ti) ->
-  n + 5 - log-half - log-base * Math.log Math.log tr + ti
+smooth = (n, tr, ti) ->
+  1 + n - log-half - log-base * Math.log Math.log tr + ti
 
 const set-color = [0, 0, 0, 255]
 
@@ -120,7 +120,8 @@ palettes =
     if depth is n then set-color
     else
       if continuous
-        v = 192.0 * (continuous-color depth, n, tr, ti) / depth
+        v = 192.0 * (smooth n, tr, ti) / depth
+        v = 0.0 if v < 0.0
         a = (Math.floor v) % 16
         b = v % 1
         c1 = uf-colors[a]
@@ -133,7 +134,7 @@ palettes =
   (n, tr, ti, depth, continuous) ->
     if depth is n then set-color
     else
-      v = if continuous then continuous-color depth, n, tr, ti else n
+      v = if continuous then smooth n, tr, ti else n
       c = to-rgb 360.0 * v / depth, 1.0, 10.0 * v / depth
       c.push 255
       c
@@ -141,7 +142,7 @@ palettes =
   (n, tr, ti, depth, continuous) ->
     if depth is n then set-color
     else 
-      v = if continuous then continuous-color depth, n, tr, ti else n
+      v = if continuous then smooth n, tr, ti else n
       v = Math.floor 512.0 * v / depth
       v = 255 if v > 255
       [v, v, v, 255]
