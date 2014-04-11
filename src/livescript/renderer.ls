@@ -71,7 +71,10 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
     $ \#size .text "#{canvas.width} x #{canvas.height}"
 
     render-line = !->
-      return if stopping or id isnt render-id or start-height isnt canvas.height or start-width isnt canvas.width
+      return if id isnt render-id or start-height isnt canvas.height or start-width isnt canvas.width
+      if stopping
+        post-cb!
+        return
       
       draw-fn r-range.0, ci
       ci += di
