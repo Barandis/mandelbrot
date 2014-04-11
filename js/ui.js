@@ -10,7 +10,7 @@
       supersamples: 0,
       depth: 50,
       autoDepth: true,
-      palette: 1,
+      palette: 0,
       update: 100,
       continuous: true
     };
