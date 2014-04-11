@@ -1,214 +1,24 @@
-(function(){
-  var split$ = ''.split;
-  define(['jquery', './renderer'], function($, renderer){
-    var defaults, canvas, options, ctx, img, init, initCanvas, setRenderButtons, setStopButtons, disableDepth, render, fillOptionsFromUrl, fillOptionsFromSettings, fillUrlFromOptions, fillSettingsFromOptions, computeAutoDepth;
-    defaults = {
-      re: -0.7,
-      im: 0.0,
-      zoom: 1.0,
-      escape: 2.0,
-      supersamples: 0,
-      depth: 50,
-      autoDepth: true,
-      palette: 0,
-      update: 100,
-      continuous: true
-    };
-    canvas = $('#mandelbrot').get(0);
-    options = clone$(defaults);
-    init = function(){
-      $(window).resize(function(){
-        initCanvas();
-        render();
-      });
-      $(window).on('hashchange', function(){
-        fillOptionsFromUrl();
-        render();
-      });
-      $('#mandelbrot').click(function(event){
-        var x, y, ref$, r, i, dx, dy;
-        x = event.clientX;
-        y = event.clientY;
-        ref$ = renderer.getRange(options), r = ref$[0], i = ref$[1];
-        dx = (r[1] - r[0]) / canvas.width;
-        dy = (i[1] - i[0]) / canvas.height;
-        options.re = r[0] + x * dx;
-        options.im = i[0] + y * dy;
-        if (event.shiftKey) {
-          options.zoom /= 2;
-        } else if (!event.ctrlKey) {
-          options.zoom *= 2;
-        }
-        render();
-      });
-      $('#control').click(function(){
-        var $this;
-        $this = $(this);
-        $('#settings').toggle(500);
-        $('#render').toggle(500);
-        $('#domain').toggle(500);
-        $this.text($this.text() === 'Hide Panels' ? 'Show Panels' : 'Hide Panels');
-      });
-      $('#draw-action').click(function(){
-        fillOptionsFromSettings();
-        render();
-      });
-      $('#stop-action').click(function(){
-        renderer.stop();
-      });
-      $('#reset-action').click(function(){
-        options = clone$(defaults);
-        render();
-      });
-      $('#export-action').click(function(){
-        var features;
-        features = "width=" + canvas.width + ",height=" + canvas.height + ",location=no";
-        window.open(canvas.toDataURL('image/png'), "Mandelbrot Set Export", features);
-      });
-      $('#auto-depth').change(disableDepth);
-      initCanvas();
-      fillOptionsFromUrl();
-      disableDepth();
-      render();
-    };
-    initCanvas = function(){
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      ctx = canvas.getContext('2d');
-      img = ctx.createImageData(canvas.width, 1);
-    };
-    setRenderButtons = function(){
-      $('#draw-action').prop('disabled', false);
-      $('#stop-action').prop('disabled', true);
-      $('#reset-action').prop('disabled', false);
-      $('#export-action').prop('disabled', false);
-    };
-    setStopButtons = function(){
-      $('#draw-action').prop('disabled', true);
-      $('#stop-action').prop('disabled', false);
-      $('#reset-action').prop('disabled', true);
-      $('#export-action').prop('disabled', true);
-    };
-    disableDepth = function(){
-      $('#depth').prop('disabled', $('#auto-depth').is(':checked'));
-    };
-    render = function(){
-      disableDepth();
-      renderer.render(canvas, ctx, img, options, setStopButtons, setRenderButtons);
-    };
-    fillOptionsFromUrl = function(){
-      var params, i$, len$, param, ref$, key, value;
-      params = split$.call(window.location.hash.substring(1), '&');
-      for (i$ = 0, len$ = params.length; i$ < len$; ++i$) {
-        param = params[i$];
-        ref$ = split$.call(param, '='), key = ref$[0], value = ref$[1];
-        switch (key) {
-        case 'r':
-          options.re = parseFloat(value);
-          break;
-        case 'i':
-          options.im = parseFloat(value);
-          break;
-        case 'z':
-          options.zoom = parseFloat(value);
-          break;
-        case 'e':
-          options.escape = parseFloat(value);
-          break;
-        case 's':
-          options.supersamples = parseInt(value);
-          break;
-        case 'd':
-          options.depth = parseInt(value);
-          break;
-        case 'a':
-          options.autoDepth = value === '1';
-          break;
-        case 'p':
-          options.palette = parseInt(value);
-          break;
-        case 'u':
-          options.update = parseInt(value);
-          break;
-        case 'c':
-          options.continuous = value === '1';
-        }
-      }
-      computeAutoDepth();
-      fillSettingsFromOptions();
-    };
-    fillOptionsFromSettings = function(){
-      var re, im, zoom, escape, supersamples, depth, autoDepth, palette, update, continuous;
-      re = $.trim($('#re').val());
-      im = $.trim($('#im').val());
-      zoom = $.trim($('#zoom').val());
-      escape = $.trim($('#escape').val());
-      supersamples = parseInt($('#supersamples').val());
-      depth = $.trim($('#depth').val());
-      autoDepth = $('#auto-depth').is(':checked');
-      palette = parseInt($('#palette').val());
-      update = $.trim($('#update').val());
-      continuous = $('#continuous').is(':checked');
-      if (re) {
-        options.re = parseFloat(re);
-      }
-      if (im) {
-        options.im = parseFloat(im);
-      }
-      if (zoom) {
-        options.zoom = parseFloat(zoom);
-      }
-      if (escape) {
-        options.escape = parseFloat(escape);
-      }
-      options.supersamples = supersamples;
-      if (depth) {
-        options.depth = parseInt(depth);
-      }
-      options.autoDepth = autoDepth;
-      options.palette = palette;
-      if (update) {
-        options.update = parseInt(update);
-      }
-      options.continuous = continuous;
-      computeAutoDepth();
-      fillUrlFromOptions();
-    };
-    fillUrlFromOptions = function(){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
-      autoDepth = autoDepth ? 1 : 0;
-      continuous = continuous ? 1 : 0;
-      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + autoDepth + "&s=" + supersamples + "&p=" + palette + "&u=" + update + "&c=" + continuous;
-    };
-    fillSettingsFromOptions = function(){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
-      $('#re').val(re);
-      $('#im').val(im);
-      $('#zoom').val(zoom);
-      $('#escape').val(escape);
-      $('#depth').val(depth);
-      $('#update').val(update);
-      $('#palette').val(palette);
-      $('#supersamples').val(supersamples);
-      $('#auto-depth').prop('checked', autoDepth);
-      $('#continuous').prop('checked', continuous);
-    };
-    computeAutoDepth = function(){
-      var ref$, rRange, iRange, factor;
-      if (options.autoDepth) {
-        ref$ = renderer.getRange(options), rRange = ref$[0], iRange = ref$[1];
-        factor = Math.sqrt(0.001 + 2.0 * Math.min(Math.abs(rRange[0] - rRange[1]), Math.abs(iRange[0] - iRange[1])));
-        options.depth = Math.floor(223.0 / factor);
-      }
-    };
-    return {
-      init: init
-    };
-  });
-  function clone$(it){
-    function fun(){} fun.prototype = it;
-    return new fun;
-  }
-}).call(this);
+/*!
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2014 Thomas J. Otterson
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+(function(){function a(a){function b(){}return b.prototype=a,new b}var b="".split;define(["jquery","./renderer"],function(c,d){var e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t;return e={re:-.7,im:0,zoom:1,escape:2,supersamples:0,depth:50,autoDepth:!0,palette:0,update:100,continuous:!0},f=c("#mandelbrot").get(0),g=a(e),j=function(){c(window).resize(function(){k(),o()}),c(window).on("hashchange",function(){p(),o()}),c("#mandelbrot").click(function(a){var b,c,e,h,i,j,k;b=a.clientX,c=a.clientY,e=d.getRange(g),h=e[0],i=e[1],j=(h[1]-h[0])/f.width,k=(i[1]-i[0])/f.height,g.re=h[0]+b*j,g.im=i[0]+c*k,a.shiftKey?g.zoom/=2:a.ctrlKey||(g.zoom*=2),o()}),c("#control").click(function(){var a;a=c(this),c("#settings").toggle(500),c("#render").toggle(500),c("#domain").toggle(500),a.text("Hide Panels"===a.text()?"Show Panels":"Hide Panels")}),c("#draw-action").click(function(){q(),o()}),c("#stop-action").click(function(){d.stop()}),c("#reset-action").click(function(){g=a(e),o()}),c("#export-action").click(function(){var a;a="width="+f.width+",height="+f.height+",location=no",window.open(f.toDataURL("image/png"),"Mandelbrot Set Export",a)}),c("#auto-depth").change(n),k(),p(),n(),o()},k=function(){f.width=window.innerWidth,f.height=window.innerHeight,h=f.getContext("2d"),i=h.createImageData(f.width,1)},l=function(){c("#draw-action").prop("disabled",!1),c("#stop-action").prop("disabled",!0),c("#reset-action").prop("disabled",!1),c("#export-action").prop("disabled",!1)},m=function(){c("#draw-action").prop("disabled",!0),c("#stop-action").prop("disabled",!1),c("#reset-action").prop("disabled",!0),c("#export-action").prop("disabled",!0)},n=function(){c("#depth").prop("disabled",c("#auto-depth").is(":checked"))},o=function(){n(),d.render(f,h,i,g,m,l)},p=function(){var a,c,d,e,f,h,i;for(a=b.call(window.location.hash.substring(1),"&"),c=0,d=a.length;d>c;++c)switch(e=a[c],f=b.call(e,"="),h=f[0],i=f[1],h){case"r":g.re=parseFloat(i);break;case"i":g.im=parseFloat(i);break;case"z":g.zoom=parseFloat(i);break;case"e":g.escape=parseFloat(i);break;case"s":g.supersamples=parseInt(i);break;case"d":g.depth=parseInt(i);break;case"a":g.autoDepth="1"===i;break;case"p":g.palette=parseInt(i);break;case"u":g.update=parseInt(i);break;case"c":g.continuous="1"===i}t(),s()},q=function(){var a,b,d,e,f,h,i,j,k,l;a=c.trim(c("#re").val()),b=c.trim(c("#im").val()),d=c.trim(c("#zoom").val()),e=c.trim(c("#escape").val()),f=parseInt(c("#supersamples").val()),h=c.trim(c("#depth").val()),i=c("#auto-depth").is(":checked"),j=parseInt(c("#palette").val()),k=c.trim(c("#update").val()),l=c("#continuous").is(":checked"),a&&(g.re=parseFloat(a)),b&&(g.im=parseFloat(b)),d&&(g.zoom=parseFloat(d)),e&&(g.escape=parseFloat(e)),g.supersamples=f,h&&(g.depth=parseInt(h)),g.autoDepth=i,g.palette=j,k&&(g.update=parseInt(k)),g.continuous=l,t(),r()},r=function(){var a,b,c,d,e,f,h,i,j,k;a=g.re,b=g.im,c=g.zoom,d=g.escape,e=g.depth,f=g.autoDepth,h=g.supersamples,i=g.palette,j=g.update,k=g.continuous,f=f?1:0,k=k?1:0,window.location.hash="r="+a+"&i="+b+"&z="+c+"&e="+d+"&d="+e+"&a="+f+"&s="+h+"&p="+i+"&u="+j+"&c="+k},s=function(){var a,b,d,e,f,h,i,j,k,l;a=g.re,b=g.im,d=g.zoom,e=g.escape,f=g.depth,h=g.autoDepth,i=g.supersamples,j=g.palette,k=g.update,l=g.continuous,c("#re").val(a),c("#im").val(b),c("#zoom").val(d),c("#escape").val(e),c("#depth").val(f),c("#update").val(k),c("#palette").val(j),c("#supersamples").val(i),c("#auto-depth").prop("checked",h),c("#continuous").prop("checked",l)},t=function(){var a,b,c,e;g.autoDepth&&(a=d.getRange(g),b=a[0],c=a[1],e=Math.sqrt(.001+2*Math.min(Math.abs(b[0]-b[1]),Math.abs(c[0]-c[1]))),g.depth=Math.floor(223/e))},{init:j}})}).call(this);

@@ -1,180 +1,24 @@
-(function(){
-  define(['jquery', './algorithm'], function($, algorithm){
-    var zoomDefault, grayPalette, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, getRange, stop;
-    zoomDefault = 2.6;
-    grayPalette = 2;
-    renderId = 0;
-    stopping = false;
-    render = function(canvas, ctx, img, options, preCb, postCb){
-      var ref$, rRange, iRange, palette, draftPalette, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
-      stopping = false;
-      ref$ = getRange(options), rRange = ref$[0], iRange = ref$[1];
-      palette = algorithm.palettes[options.palette];
-      draftPalette = algorithm.palettes[grayPalette];
-      dr = (rRange[1] - rRange[0]) / (canvas.width - 0.5);
-      di = (iRange[1] - iRange[0]) / (canvas.height - 0.5);
-      updateInfo(options, rRange, iRange);
-      renderId++;
-      drawLine = function(crStart, ci, offset){
-        var cr, escape, depth, continuous, i$, to$, p, color;
-        offset == null && (offset = 0);
-        cr = crStart;
-        escape = options.escape, depth = options.depth, continuous = options.continuous;
-        for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
-          p = algorithm.mandelbrot(cr, ci, escape, depth);
-          color = palette(p[0], p[1], p[2], depth, continuous);
-          if (!color) {
-            console.log({
-              p: p,
-              minValue: minValue,
-              maxValue: maxValue
-            });
-          }
-          img.data[offset++] = color[0];
-          img.data[offset++] = color[1];
-          img.data[offset++] = color[2];
-          img.data[offset++] = 255;
-          cr += dr;
-        }
-      };
-      drawSupersampledLine = function(crStart, ci, offset){
-        var cr, escape, depth, supersamples, continuous, i$, to$, color, j$, rx, ry, p;
-        offset == null && (offset = 0);
-        cr = crStart;
-        escape = options.escape, depth = options.depth, supersamples = options.supersamples, continuous = options.continuous;
-        for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
-          color = [0, 0, 0, 255];
-          for (j$ = 0; j$ <= supersamples; ++j$) {
-            rx = Math.random() * dr;
-            ry = Math.random() * di;
-            p = algorithm.mandelbrot(cr - rx / 2, ci - ry / 2, escape, depth);
-            addRgb(color, palette(p[0], p[1], p[2], depth, continuous));
-          }
-          divRgb(color, supersamples);
-          img.data[offset++] = color[0];
-          img.data[offset++] = color[1];
-          img.data[offset++] = color[2];
-          img.data[offset++] = 255;
-          cr += dr;
-        }
-      };
-      drawSolidLine = function(i, color){
-        var offset, i$, to$;
-        offset = i * canvas.width;
-        for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
-          img.data[offset++] = color[0];
-          img.data[offset++] = color[1];
-          img.data[offset++] = color[2];
-          img.data[offset++] = color[3];
-        }
-      };
-      drawLines = function(){
-        var start, startHeight, startWidth, lastUpdate, pixels, ci, si, drawFn, id, renderLine;
-        start = Date.now();
-        startHeight = canvas.height;
-        startWidth = canvas.width;
-        lastUpdate = start;
-        pixels = 0;
-        ci = iRange[0];
-        si = 0;
-        drawFn = options.supersamples > 1 ? drawSupersampledLine : drawLine;
-        id = renderId;
-        $('#size').text(canvas.width + " x " + canvas.height);
-        renderLine = function(){
-          var now, elapsedTime, speed;
-          if (id !== renderId || startHeight !== canvas.height || startWidth !== canvas.width) {
-            return;
-          }
-          if (stopping) {
-            postCb();
-            return;
-          }
-          drawFn(rRange[0], ci);
-          ci += di;
-          pixels += canvas.width;
-          ctx.putImageData(img, 0, si);
-          now = Date.now();
-          if (si++ < canvas.height) {
-            if (now - lastUpdate >= options.update) {
-              drawSolidLine(0, [255, 59, 3, 255]);
-              ctx.putImageData(img, 0, si);
-              elapsedTime = now - start;
-              $('#render-time').text((elapsedTime / 1000.0).toFixed(1));
-              speed = 1000 * pixels / elapsedTime;
-              if (metricize(speed).substr(0, 3) === 'NaN') {
-                speed = Math.floor(60.0 * pixels / elapsedTime);
-                $('#render-unit').text('min');
-              } else {
-                $('#render-unit').text('s');
-              }
-              $('#render-speed').text(metricize(speed));
-              $('#pixels').text(metricize(pixels) + "px");
-              lastUpdate = now;
-              setTimeout(renderLine, 0);
-            } else {
-              renderLine();
-            }
-          } else {
-            $('#pixels').text(metricize(pixels));
-            postCb();
-          }
-        };
-        renderLine();
-      };
-      preCb();
-      drawLines();
-    };
-    adjustAspectRatio = function(zoom){
-      var rangeRatio, screenRatio;
-      rangeRatio = zoom[0] / zoom[1];
-      screenRatio = window.innerWidth / window.innerHeight;
-      if (screenRatio > rangeRatio) {
-        zoom[0] *= screenRatio / rangeRatio;
-      } else {
-        zoom[1] *= rangeRatio / screenRatio;
-      }
-    };
-    updateInfo = function(options, reRange, imRange){
-      var rmin, rmax, imin, imax, horiz, vert;
-      rmin = reRange[0], rmax = reRange[1];
-      imin = imRange[0], imax = imRange[1];
-      horiz = Math.abs(rmin - rmax);
-      vert = Math.abs(imin - imax);
-      $('#domain span').html("d<sub>Re</sub> = " + horiz + " | d<sub>Im</sub> = " + vert);
-    };
-    addRgb = function(v, w){
-      v[0] += w[0];
-      v[1] += w[1];
-      v[2] += w[2];
-      v[3] += w[3];
-    };
-    divRgb = function(v, d){
-      v[0] /= d;
-      v[1] /= d;
-      v[2] /= d;
-      v[3] /= d;
-    };
-    metricize = function(number, places){
-      var unit, magnitude, formatted;
-      places == null && (places = 2);
-      unit = ["", 'k', 'M', 'G', 'T', 'P', 'E'];
-      magnitude = Math.floor(Math.floor(Math.log(number) / Math.LN10) / 3);
-      formatted = (number / Math.pow(10, 3 * magnitude)).toFixed(places);
-      return formatted + " " + unit[magnitude];
-    };
-    getRange = function(options){
-      var zoom;
-      zoom = [zoomDefault / options.zoom, zoomDefault / options.zoom];
-      adjustAspectRatio(zoom);
-      return [[options.re - zoom[0] / 2, options.re + zoom[0] / 2], [options.im + zoom[1] / 2, options.im - zoom[1] / 2]];
-    };
-    stop = function(){
-      stopping = true;
-    };
-    return {
-      render: render,
-      stop: stop,
-      getRange: getRange
-    };
-  });
-}).call(this);
+/*!
+ * The MIT License (MIT)
+ * 
+ * Copyright (c) 2014 Thomas J. Otterson
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+(function(){define(["jquery","./mandelbrot"],function(a,b){var c,d,e,f,g,h,i,j,k,l,m,n;return c=2.6,d=2,e=0,f=!1,g=function(c,d,g,h,n,o){var p,q,r,s,t,u,v,w,x,y;f=!1,p=m(h),q=p[0],r=p[1],s=b.calculator(h.palette,h.escape,h.depth,h.continuous),t=(q[1]-q[0])/(c.width-.5),u=(r[1]-r[0])/(c.height-.5),i(h,q,r),e++,v=function(a,b,d){var e,f,h,i;for(null==d&&(d=0),e=a,f=0,h=c.width;h>=f;++f)i=s(e,b),g.data[d++]=i[0],g.data[d++]=i[1],g.data[d++]=i[2],g.data[d++]=255,e+=t},w=function(a,b,d){var e,f,i,l,m,n,o,p;for(null==d&&(d=0),e=a,f=0,i=c.width;i>=f;++f){for(l=[0,0,0,255],m=0,n=h.supersamples;n>=m;++m)o=Math.random()*t,p=Math.random()*u,j(l,s(e-o/2,b-p/2));k(l,h.supersamples),g.data[d++]=l[0],g.data[d++]=l[1],g.data[d++]=l[2],g.data[d++]=255,e+=t}},x=function(a,b){var d,e,f;for(d=a*c.width,e=0,f=c.width;f>=e;++e)g.data[d++]=b[0],g.data[d++]=b[1],g.data[d++]=b[2],g.data[d++]=b[3]},y=function(){var b,i,j,k,m,n,p,s;b=Date.now(),i=b,j=0,k=r[0],m=0,n=e,p=h.supersamples>1?w:v,a("#size").text(c.width+" x "+c.height),(s=function(){var r,t,v;if(n===e){if(f)return void o();p(q[0],k),k+=u,j+=c.width,d.putImageData(g,0,m),r=Date.now(),m++<c.height?r-i>=h.update?(x(0,[255,59,3,255]),d.putImageData(g,0,m),t=r-b,a("#render-time").text((t/1e3).toFixed(1)),v=1e3*j/t,"NaN"===l(v).substr(0,3)?(v=Math.floor(60*j/t),a("#render-unit").text("min")):a("#render-unit").text("s"),a("#render-speed").text(l(v)),a("#pixels").text(l(j)+"px"),i=r,setTimeout(s,0)):s():(a("#pixels").text(l(j)),o())}})()},n(),y()},h=function(a){var b,c;b=a[0]/a[1],c=window.innerWidth/window.innerHeight,c>b?a[0]*=c/b:a[1]*=b/c},i=function(b,c,d){var e,f,g,h,i,j;e=c[0],f=c[1],g=d[0],h=d[1],i=Math.abs(e-f),j=Math.abs(g-h),a("#domain span").html("d<sub>Re</sub> = "+i+" | d<sub>Im</sub> = "+j)},j=function(a,b){a[0]+=b[0],a[1]+=b[1],a[2]+=b[2],a[3]+=b[3]},k=function(a,b){a[0]/=b,a[1]/=b,a[2]/=b,a[3]/=b},l=function(a,b){var c,d,e;return null==b&&(b=2),c=["","k","M","G","T","P","E"],d=Math.floor(Math.floor(Math.log(a)/Math.LN10)/3),e=(a/Math.pow(10,3*d)).toFixed(b),e+" "+c[d]},m=function(a){var b;return b=[c/a.zoom,c/a.zoom],h(b),[[a.re-b[0]/2,a.re+b[0]/2],[a.im+b[1]/2,a.im-b[1]/2]]},n=function(){f=!0},{render:g,stop:n,getRange:m}})}).call(this);
