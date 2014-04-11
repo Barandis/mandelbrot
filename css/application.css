@@ -28,7 +28,7 @@ button {
   -ms-transition: background-color 500ms, border-color 500ms;
   transition: background-color 500ms, border-color 500ms;
 }
-button:hover,
+button:hover:not(:disabled),
 button:focus {
   background-color: #666;
   border-color: #fff;
@@ -37,6 +37,17 @@ button:focus {
   -o-transition: background-color 500ms, border-color 500ms;
   -ms-transition: background-color 500ms, border-color 500ms;
   transition: background-color 500ms, border-color 500ms;
+}
+button:disabled {
+  background-color: rgba(30,30,30,0.5);
+  cursor: default;
+  border-color: rgba(30,30,30,0.5);
+  color: #333;
+  -webkit-transition: background-color 500ms, border-color 500ms, color 500ms;
+  -moz-transition: background-color 500ms, border-color 500ms, color 500ms;
+  -o-transition: background-color 500ms, border-color 500ms, color 500ms;
+  -ms-transition: background-color 500ms, border-color 500ms, color 500ms;
+  transition: background-color 500ms, border-color 500ms, color 500ms;
 }
 input,
 select {
@@ -62,6 +73,18 @@ select:focus {
   -ms-transition: background-color 500ms, border-color 500ms;
   transition: background-color 500ms, border-color 500ms;
 }
+input:disabled,
+select:disabled {
+  background-color: rgba(30,30,30,0.5);
+  cursor: default;
+  border-color: rgba(30,30,30,0.5);
+  color: #333;
+  -webkit-transition: background-color 500ms, border-color 500ms, color 500ms;
+  -moz-transition: background-color 500ms, border-color 500ms, color 500ms;
+  -o-transition: background-color 500ms, border-color 500ms, color 500ms;
+  -ms-transition: background-color 500ms, border-color 500ms, color 500ms;
+  transition: background-color 500ms, border-color 500ms, color 500ms;
+}
 input {
   padding: 0.1em 0.5em;
 }
@@ -78,7 +101,7 @@ input {
   background-color: rgba(30,30,30,0.5);
   color: #fff;
   padding: 5px;
-  font-size: 0.8em;
+  font-size: 0.75em;
   text-shadow: 1px 1px 2px #000;
   border: 1px solid #666;
   -webkit-border-radius: 4px;
@@ -94,7 +117,7 @@ input {
 .info label {
   font-weight: bold;
   display: inline-block;
-  width: 40%;
+  width: 45%;
 }
 #control {
   width: 8em;
@@ -110,6 +133,9 @@ input {
   left: 5px;
   color: #fff;
   border-color: #666;
+}
+#settings label {
+  width: 40%;
 }
 #settings header {
   text-align: center;

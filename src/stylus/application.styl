@@ -3,6 +3,7 @@
 semi-transparent = rgba(30, 30, 30, 0.5)
 opaque = #666
 settings-label-width = 40%
+info-label-width = 45%
 
 body
   background-color black
@@ -27,11 +28,17 @@ button
   text-shadow 1px 1px 2px black
   cursor pointer
   transition background-color 500ms, border-color 500ms
-  &:hover
+  &:hover:not(:disabled)
   &:focus
     background-color opaque
     border-color white
     transition background-color 500ms, border-color 500ms
+  &:disabled
+    background-color semi-transparent
+    cursor default
+    border-color semi-transparent
+    color #333
+    transition background-color 500ms, border-color 500ms, color 500ms
 
 input
 select
@@ -45,6 +52,12 @@ select
     background-color opaque
     border-color white
     transition background-color 500ms, border-color 500ms
+  &:disabled
+    background-color semi-transparent
+    cursor default
+    border-color semi-transparent
+    color #333
+    transition background-color 500ms, border-color 500ms, color 500ms
 
 input
   padding 0.1em 0.5em
@@ -60,7 +73,7 @@ input
   background-color semi-transparent
   color white
   padding 5px
-  font-size 0.8em
+  font-size 0.75em
   text-shadow 1px 1px 2px black
   border 1px solid #666
   border-radius 4px
@@ -73,7 +86,7 @@ input
   label
     font-weight bold
     display inline-block
-    width settings-label-width
+    width info-label-width
 
 #control
   width 8em
@@ -85,6 +98,8 @@ input
   absolute top 5px left 5px
   color white
   border-color #666
+  label
+    width settings-label-width
   header
     text-align center
     padding 5px 0

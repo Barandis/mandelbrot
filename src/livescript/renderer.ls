@@ -4,19 +4,15 @@ const zoom-default = 2.6
 render-id = 0
 stopping = false
 
-render = (canvas, ctx, img, options) !->
+render = (canvas, ctx, img, options, pre-cb, post-cb) !->
   stopping := false
-  palette = algorithm.palettes[options.palette]
   [r-range, i-range] = get-range options
-
-  if options.auto-depth
-    factor = Math.sqrt 0.001 + 2.0 * Math.min (Math.abs r-range.0 - r-range.1), (Math.abs i-range.0 - i-range.1)
-    options.depth = Math.floor 223.0 / factor
+  
+  palette = algorithm.palettes[options.palette]
 
   dr = (r-range.1 - r-range.0) / (canvas.width - 0.5)
   di = (i-range.1 - i-range.0) / (canvas.height - 0.5)
 
-  update-url options
   update-info options, r-range, i-range
   render-id++
 
@@ -25,7 +21,7 @@ render = (canvas, ctx, img, options) !->
     { escape, depth, continuous } = options
     for from 0 to canvas.width
       p = algorithm.mandelbrot cr, ci, escape, depth
-      color = palette depth, p.0, p.1, p.2, continuous
+      color = palette p.0, p.1, p.2, depth, continuous
 
       img.data[offset++] = color.0
       img.data[offset++] = color.1
@@ -43,7 +39,7 @@ render = (canvas, ctx, img, options) !->
         rx = Math.random! * dr
         ry = Math.random! * di
         p = algorithm.mandelbrot cr - rx / 2, ci - ry / 2, escape, depth
-        add-rgb color, palette(depth, p.0, p.1, p.2, continuous)
+        add-rgb color, palette p.0, p.1, p.2, depth, continuous
       div-rgb color, supersamples
 
       img.data[offset++] = color.0
@@ -108,9 +104,11 @@ render = (canvas, ctx, img, options) !->
           render-line!
       else
         $ \#pixels .text metricize pixels
+        post-cb!
 
     render-line!
 
+  pre-cb!
   draw-lines!
 
 adjust-aspect-ratio = (zoom) !->
@@ -119,27 +117,7 @@ adjust-aspect-ratio = (zoom) !->
   if screen-ratio > range-ratio then zoom.0 *= screen-ratio / range-ratio
   else zoom.1 *= range-ratio / screen-ratio
 
-update-url = (options) !->
-  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
-  ad = if auto-depth then 1 else 0
-  cn = if continuous then 1 else 0
-  window.location.hash = "r=#re&i=#im&z=#zoom&e=#escape&d=#depth&a=#ad
-                          &s=#supersamples&p=#palette&u=#update&c=#cn"
-
 update-info = (options, re-range, im-range) !->
-  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
-  $ \#re .val re
-  $ \#im .val im
-  $ \#zoom .val zoom
-  $ \#escape .val escape
-  $ \#depth .val depth
-  $ \#update .val update
-  $ \#palette .val palette
-  $ \#supersamples .val supersamples
-
-  $ \#auto-depth .prop \checked, auto-depth
-  $ \#continuous .prop \checked, continuous
-
   [rmin, rmax] = re-range
   [imin, imax] = im-range
   horiz = Math.abs rmin - rmax

@@ -1,21 +1,16 @@
 (function(){
   define(['jquery', './algorithm'], function($, algorithm){
-    var zoomDefault, renderId, stopping, render, adjustAspectRatio, updateUrl, updateInfo, addRgb, divRgb, metricize, getRange, stop;
+    var zoomDefault, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, getRange, stop;
     zoomDefault = 2.6;
     renderId = 0;
     stopping = false;
-    render = function(canvas, ctx, img, options){
-      var palette, ref$, rRange, iRange, factor, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
+    render = function(canvas, ctx, img, options, preCb, postCb){
+      var ref$, rRange, iRange, palette, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
       stopping = false;
-      palette = algorithm.palettes[options.palette];
       ref$ = getRange(options), rRange = ref$[0], iRange = ref$[1];
-      if (options.autoDepth) {
-        factor = Math.sqrt(0.001 + 2.0 * Math.min(Math.abs(rRange[0] - rRange[1]), Math.abs(iRange[0] - iRange[1])));
-        options.depth = Math.floor(223.0 / factor);
-      }
+      palette = algorithm.palettes[options.palette];
       dr = (rRange[1] - rRange[0]) / (canvas.width - 0.5);
       di = (iRange[1] - iRange[0]) / (canvas.height - 0.5);
-      updateUrl(options);
       updateInfo(options, rRange, iRange);
       renderId++;
       drawLine = function(crStart, ci, offset){
@@ -25,7 +20,7 @@
         escape = options.escape, depth = options.depth, continuous = options.continuous;
         for (i$ = 0, to$ = canvas.width; i$ <= to$; ++i$) {
           p = algorithm.mandelbrot(cr, ci, escape, depth);
-          color = palette(depth, p[0], p[1], p[2], continuous);
+          color = palette(p[0], p[1], p[2], depth, continuous);
           img.data[offset++] = color[0];
           img.data[offset++] = color[1];
           img.data[offset++] = color[2];
@@ -44,7 +39,7 @@
             rx = Math.random() * dr;
             ry = Math.random() * di;
             p = algorithm.mandelbrot(cr - rx / 2, ci - ry / 2, escape, depth);
-            addRgb(color, palette(depth, p[0], p[1], p[2], continuous));
+            addRgb(color, palette(p[0], p[1], p[2], depth, continuous));
           }
           divRgb(color, supersamples);
           img.data[offset++] = color[0];
@@ -108,10 +103,12 @@
             }
           } else {
             $('#pixels').text(metricize(pixels));
+            postCb();
           }
         };
         renderLine();
       };
+      preCb();
       drawLines();
     };
     adjustAspectRatio = function(zoom){
@@ -124,26 +121,8 @@
         zoom[1] *= rangeRatio / screenRatio;
       }
     };
-    updateUrl = function(options){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous, ad, cn;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
-      ad = autoDepth ? 1 : 0;
-      cn = continuous ? 1 : 0;
-      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + ad + "&s=" + supersamples + "&p=" + palette + "&u=" + update + "&c=" + cn;
-    };
     updateInfo = function(options, reRange, imRange){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous, rmin, rmax, imin, imax, horiz, vert;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
-      $('#re').val(re);
-      $('#im').val(im);
-      $('#zoom').val(zoom);
-      $('#escape').val(escape);
-      $('#depth').val(depth);
-      $('#update').val(update);
-      $('#palette').val(palette);
-      $('#supersamples').val(supersamples);
-      $('#auto-depth').prop('checked', autoDepth);
-      $('#continuous').prop('checked', continuous);
+      var rmin, rmax, imin, imax, horiz, vert;
       rmin = reRange[0], rmax = reRange[1];
       imin = imRange[0], imax = imRange[1];
       horiz = Math.abs(rmin - rmax);

@@ -17,14 +17,15 @@ options = ^^defaults
 var ctx, img
 
 init = !->
+
   # Initialize event handlers
   $ window .resize !-> 
     init-canvas!
-    renderer.render canvas, ctx, img, options
+    render!
 
   $ window .on \hashchange !->
     fill-options-from-url!
-    renderer.render canvas, ctx, img, options
+    render!
 
   $ \#mandelbrot .click (event) !->
     x = event.client-x
@@ -39,7 +40,7 @@ init = !->
     if event.shift-key then options.zoom /= 2
     else if not event.ctrl-key then options.zoom *= 2
 
-    renderer.render canvas, ctx, img, options
+    render!
 
   $ \#control .click !->
     $this = $ @
@@ -50,34 +51,49 @@ init = !->
 
   $ \#draw-action .click !->
     fill-options-from-settings!
-    renderer.render canvas, ctx, img, options
+    render!
 
   $ \#stop-action .click !->
     renderer.stop!
 
   $ \#reset-action .click !->
     options := ^^defaults
-    renderer.render canvas, ctx, img, options
+    render!
 
   $ \#export-action .click !->
     features = "width=#{canvas.width},height=#{canvas.height},location=no"
     window.open (canvas.to-data-URL \image/png), "Mandelbrot Set Export", features 
 
-  check-disabled = !->
-    $ \#depth .prop \disabled, ($ @ .is \:checked)
-
-  $ \#auto-depth .change check-disabled
-  check-disabled!
+  $ \#auto-depth .change disable-depth
 
   init-canvas!
   fill-options-from-url!
-  renderer.render canvas, ctx, img, options
+  disable-depth!
+  render!
 
 init-canvas = !->
   canvas.width = window.inner-width
   canvas.height = window.inner-height
   ctx := canvas.get-context \2d
   img := ctx.create-image-data canvas.width, 1
+
+set-render-buttons = !->
+  $ \#draw-action .prop \disabled false
+  $ \#stop-action .prop \disabled true
+  $ \#reset-action .prop \disabled false
+  $ \#export-action .prop \disabled false
+
+set-stop-buttons = !->
+  $ \#draw-action .prop \disabled true
+  $ \#stop-action .prop \disabled false
+  $ \#reset-action .prop \disabled true
+  $ \#export-action .prop \disabled true
+
+disable-depth = !-> $ \#depth .prop \disabled, ($ \#auto-depth .is \:checked)
+
+render = !->
+  disable-depth!
+  renderer.render canvas, ctx, img, options, set-stop-buttons, set-render-buttons
 
 fill-options-from-url = !->
   params = (window.location.hash.substring 1) / '&'
@@ -95,6 +111,9 @@ fill-options-from-url = !->
     | \p            => options.palette = parse-int value
     | \u            => options.update = parse-int value
     | \c            => options.continuous = value is \1
+
+  compute-auto-depth!
+  fill-settings-from-options!
 
 fill-options-from-settings = !->
   re                  = $.trim ($ \#re .val!)
@@ -118,5 +137,35 @@ fill-options-from-settings = !->
   options.palette = palette
   options.update = parse-int update if update
   options.continuous = continuous
+
+  compute-auto-depth!
+  fill-url-from-options!
+
+fill-url-from-options = !->
+  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
+  auto-depth = if auto-depth then 1 else 0
+  continuous = if continuous then 1 else 0
+  window.location.hash = "r=#re&i=#im&z=#zoom&e=#escape&d=#depth&a=#auto-depth
+                          &s=#supersamples&p=#palette&u=#update&c=#continuous"
+
+fill-settings-from-options = !->
+  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
+  $ \#re .val re
+  $ \#im .val im
+  $ \#zoom .val zoom
+  $ \#escape .val escape
+  $ \#depth .val depth
+  $ \#update .val update
+  $ \#palette .val palette
+  $ \#supersamples .val supersamples
+
+  $ \#auto-depth .prop \checked, auto-depth
+  $ \#continuous .prop \checked, continuous
+
+compute-auto-depth = !->
+  if options.auto-depth
+    [r-range, i-range] = renderer.get-range options
+    factor = Math.sqrt 0.001 + 2.0 * Math.min (Math.abs r-range.0 - r-range.1), (Math.abs i-range.0 - i-range.1)
+    options.depth = Math.floor 223.0 / factor
 
 { init }
