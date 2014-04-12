@@ -116,6 +116,8 @@ set-stop-buttons = !->
 disable-depth = !-> $ \#depth .prop \disabled, ($ \#auto-depth .is \:checked)
 
 render = !->
+  fill-settings-from-options!
+  fill-url-from-options!
   disable-depth!
   renderer.render canvas, ctx, img, options, set-stop-buttons, set-render-buttons
 

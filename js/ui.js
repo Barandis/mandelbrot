@@ -116,6 +116,8 @@
       $('#depth').prop('disabled', $('#auto-depth').is(':checked'));
     };
     render = function(){
+      fillSettingsFromOptions();
+      fillUrlFromOptions();
       disableDepth();
       renderer.render(canvas, ctx, img, options, setStopButtons, setRenderButtons);
     };

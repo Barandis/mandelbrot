@@ -144,8 +144,8 @@ adjust-aspect-ratio = (zoom) !->
 update-info = (options, re-range, im-range) !->
   [rmin, rmax] = re-range
   [imin, imax] = im-range
-  horiz = Math.abs rmin - rmax
-  vert = Math.abs imin - imax
+  horiz = exponentize Math.abs rmax - rmin
+  vert = exponentize Math.abs imax - imin
   $ '#domain span' .html "d<sub>Re</sub> = #horiz | d<sub>Im</sub> = #vert"
 
 add-rgb = (v, w) !->
@@ -160,11 +160,17 @@ div-rgb = (v, d) !->
   v.2 /= d
   v.3 /= d
 
-metricize = (number, places = 2) ->
+metricize = (number, precision = 3) ->
   unit = [ "", \k, \M, \G, \T, \P, \E ]
   magnitude = Math.floor (Math.floor (Math.log number) / Math.LN10) / 3
-  formatted = (number / 10 ^ (3 * magnitude)).to-fixed places
+  formatted = (number / 10 ^ (3 * magnitude)).to-precision precision
   "#formatted #{unit[magnitude]}"
+
+exponentize = (number, places = -1) ->
+  return (if places == -1 then number.to-precision! else number.to-precision places) if (Math.abs number) >= 1
+  n = if places is -1 then number.to-exponential! else number.to-exponential places
+  [mantissa, exponent] = n.split /e/
+  "#mantissa &times; 10<sup>#exponent</sup>"
 
 get-range = (options) ->
   zoom = [ zoom-default / options.zoom, zoom-default / options.zoom ]

@@ -68,8 +68,6 @@ mandelbrot = (cr, ci, escape, depth) ->
 const set-color = [0, 0, 0, 255]
 
 const uf-colors =
-  [ 66  30  15]
-  [ 25   7  26]
   [  9   1  47]
   [  4   4  73]
   [  0   7 100]
@@ -84,13 +82,15 @@ const uf-colors =
   [204 128   0]
   [153  87   0]
   [106  52   3]
+  [ 66  30  15]
+  [ 25   7  26]
 
 palettes = 
   (n, tr, ti, depth, cont) ->
     if depth is n then set-color
     else
       if cont
-        v = 192.0 * (interpolate n, tr, ti) / depth
+        v = 256.0 * (interpolate n, tr, ti) / depth
         v = 0.0 if v < 0.0
         a = (Math.floor v) % 16
         b = v % 1
@@ -98,7 +98,7 @@ palettes =
         c2 = uf-colors[(a + 1) % 16]
         [c1.0 + b * (c2.0 - c1.0), c1.1 + b * (c2.1 - c1.1), c1.2 + b * (c2.2 - c1.2)]
       else
-        v = Math.floor 192.0 * n / depth
+        v = Math.floor 256.0 * n / depth
         uf-colors[v % 16]
 
   (n, tr, ti, depth, cont) ->

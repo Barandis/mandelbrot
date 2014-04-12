@@ -23,7 +23,7 @@
  */
 (function(){
   define(['jquery', './mandelbrot'], function($, mandelbrot){
-    var zoomDefault, grayPalette, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, getRange, stop;
+    var zoomDefault, grayPalette, renderId, stopping, render, adjustAspectRatio, updateInfo, addRgb, divRgb, metricize, exponentize, getRange, stop;
     zoomDefault = 2.6;
     grayPalette = 2;
     renderId = 0;
@@ -147,8 +147,8 @@
       var rmin, rmax, imin, imax, horiz, vert;
       rmin = reRange[0], rmax = reRange[1];
       imin = imRange[0], imax = imRange[1];
-      horiz = Math.abs(rmin - rmax);
-      vert = Math.abs(imin - imax);
+      horiz = exponentize(Math.abs(rmax - rmin));
+      vert = exponentize(Math.abs(imax - imin));
       $('#domain span').html("d<sub>Re</sub> = " + horiz + " | d<sub>Im</sub> = " + vert);
     };
     addRgb = function(v, w){
@@ -163,13 +163,27 @@
       v[2] /= d;
       v[3] /= d;
     };
-    metricize = function(number, places){
+    metricize = function(number, precision){
       var unit, magnitude, formatted;
-      places == null && (places = 2);
+      precision == null && (precision = 3);
       unit = ["", 'k', 'M', 'G', 'T', 'P', 'E'];
       magnitude = Math.floor(Math.floor(Math.log(number) / Math.LN10) / 3);
-      formatted = (number / Math.pow(10, 3 * magnitude)).toFixed(places);
+      formatted = (number / Math.pow(10, 3 * magnitude)).toPrecision(precision);
       return formatted + " " + unit[magnitude];
+    };
+    exponentize = function(number, places){
+      var n, ref$, mantissa, exponent;
+      places == null && (places = -1);
+      if (Math.abs(number) >= 1) {
+        return places === -1
+          ? number.toPrecision()
+          : number.toPrecision(places);
+      }
+      n = places === -1
+        ? number.toExponential()
+        : number.toExponential(places);
+      ref$ = n.split(/e/), mantissa = ref$[0], exponent = ref$[1];
+      return mantissa + " &times; 10<sup>" + exponent + "</sup>";
     };
     getRange = function(options){
       var zoom;
