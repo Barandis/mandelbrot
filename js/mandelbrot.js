@@ -48,27 +48,27 @@
     setColor = [0, 0, 0, 255];
     ufColors = [[9, 1, 47], [4, 4, 73], [0, 7, 100], [12, 44, 138], [24, 82, 177], [57, 125, 209], [134, 181, 229], [211, 236, 248], [241, 233, 191], [248, 201, 95], [255, 170, 0], [204, 128, 0], [153, 87, 0], [106, 52, 3], [66, 30, 15], [25, 7, 26]];
     palettes = [
-      function(n, tr, ti, depth, cont){
+      function(n, tr, ti, depth, cycles, rotation, cont){
         var v, a, b, c1, c2;
         if (depth === n) {
           return setColor;
         } else {
           if (cont) {
-            v = 256.0 * interpolate(n, tr, ti) / depth;
+            v = 16.0 * cycles * interpolate(n, tr, ti) / depth;
             if (v < 0.0) {
               v = 0.0;
             }
-            a = Math.floor(v) % 16;
+            a = (Math.floor(v) + rotation) % 16;
             b = v % 1;
             c1 = ufColors[a];
             c2 = ufColors[(a + 1) % 16];
             return [c1[0] + b * (c2[0] - c1[0]), c1[1] + b * (c2[1] - c1[1]), c1[2] + b * (c2[2] - c1[2])];
           } else {
-            v = Math.floor(256.0 * n / depth);
-            return ufColors[v % 16];
+            v = Math.floor(16.0 * cycles * n / depth);
+            return ufColors[(v + rotation) % 16];
           }
         }
-      }, function(n, tr, ti, depth, cont){
+      }, function(n, tr, ti, depth, cycles, rotation, cont){
         var v, c;
         if (depth === n) {
           return setColor;
@@ -78,7 +78,7 @@
           c.push(255);
           return c;
         }
-      }, function(n, tr, ti, depth, cont){
+      }, function(n, tr, ti, depth, cycles, rotation, cont){
         var v;
         if (depth === n) {
           return setColor;
@@ -131,11 +131,11 @@
       return 1 + n - logHalf - logBase * Math.log(Math.log(tr + ti));
     };
     return {
-      calculator: function(palette, escape, depth, cont){
+      calculator: function(palette, escape, depth, cycles, rotation, cont){
         return function(cr, ci){
           var p;
           p = mandelbrot(cr, ci, escape, depth);
-          return palettes[palette](p[0], p[1], p[2], depth, cont);
+          return palettes[palette](p[0], p[1], p[2], depth, cycles, rotation, cont);
         };
       }
     };

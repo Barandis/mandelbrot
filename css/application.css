@@ -160,6 +160,21 @@ input {
 #settings label {
   width: 40%;
 }
+#settings .half {
+  padding-left: 40%;
+}
+#settings .half label {
+  width: 24%;
+}
+#settings .coloring {
+  margin-top: 0.4em;
+}
+#settings .coloring > label {
+  float: left;
+}
+#settings .coloring > div {
+  margin-left: 40%;
+}
 #settings header {
   text-align: center;
   padding: 5px 0;
@@ -196,17 +211,12 @@ input {
 #settings section#inputs input[type="checkbox"] + label {
   display: inline;
 }
+#settings section#inputs #cycles,
+#settings section#inputs #rotation {
+  width: 9em;
+}
 #settings section#inputs #depth {
   width: 6em;
-}
-#settings section#inputs .coloring {
-  margin-top: 0.4em;
-}
-#settings section#inputs .coloring > label {
-  float: left;
-}
-#settings section#inputs .coloring > div {
-  margin-left: 40%;
 }
 #render {
   width: 20em;

@@ -33,6 +33,8 @@ const defaults =
   depth: 50
   auto-depth: true
   palette: 0
+  cycles: 10
+  rotation: 0
   update: 100
   continuous: true
 
@@ -135,6 +137,8 @@ fill-options-from-url = !->
     | \d            => options.depth = parse-int value
     | \a            => options.auto-depth = value is \1
     | \p            => options.palette = parse-int value
+    | \y            => options.cycles = parse-int value
+    | \o            => options.rotation = parse-int value
     | \u            => options.update = parse-int value
     | \c            => options.continuous = value is \1
 
@@ -150,32 +154,36 @@ fill-options-from-settings = !->
   depth               = $.trim ($ \#depth .val!)
   auto-depth          = $ \#auto-depth .is \:checked
   palette             = parse-int ($ \#palette .val!)
+  cycles              = $.trim ($ \#cycles .val!)
+  rotation            = $.trim ($ \#rotation .val!)
   update              = $.trim ($ \#update .val!)
   continuous          = $ \#continuous .is \:checked
 
-  options.re = parse-float re if re
-  options.im = parse-float im if im
-  options.zoom = parse-float zoom if zoom
-  options.escape = parse-float escape if escape
+  options.re = parse-float re if re?
+  options.im = parse-float im if im?
+  options.zoom = parse-float zoom if zoom?
+  options.escape = parse-float escape if escape?
   options.supersamples = supersamples
-  options.depth = parse-int depth if depth
+  options.depth = parse-int depth if depth?
   options.auto-depth = auto-depth
   options.palette = palette
-  options.update = parse-int update if update
+  options.cycles = parse-int cycles if cycles?
+  options.rotation = parse-int rotation if rotation?
+  options.update = parse-int update if update?
   options.continuous = continuous
 
   compute-auto-depth!
   fill-url-from-options!
 
 fill-url-from-options = !->
-  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
+  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, cycles, rotation, update, continuous } = options
   auto-depth = if auto-depth then 1 else 0
   continuous = if continuous then 1 else 0
   window.location.hash = "r=#re&i=#im&z=#zoom&e=#escape&d=#depth&a=#auto-depth
-                          &s=#supersamples&p=#palette&u=#update&c=#continuous"
+                          &s=#supersamples&p=#palette&y=#cycles&o=#rotation&u=#update&c=#continuous"
 
 fill-settings-from-options = !->
-  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, update, continuous } = options
+  { re, im, zoom, escape, depth, auto-depth, supersamples, palette, cycles, rotation, update, continuous } = options
   $ \#re .val re
   $ \#im .val im
   $ \#zoom .val zoom
@@ -183,6 +191,8 @@ fill-settings-from-options = !->
   $ \#depth .val depth
   $ \#update .val update
   $ \#palette .val palette
+  $ \#cycles .val cycles
+  $ \#rotation .val rotation
   $ \#supersamples .val supersamples
 
   $ \#auto-depth .prop \checked, auto-depth

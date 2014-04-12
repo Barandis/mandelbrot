@@ -33,7 +33,8 @@ render = (canvas, ctx, img, options, pre-cb, post-cb) !->
   stopping := false
   [r-range, i-range] = get-range options
   
-  compute = mandelbrot.calculator options.palette, options.escape, options.depth, options.continuous
+  compute = mandelbrot.calculator options.palette, options.escape, options.depth, 
+                                  options.cycles, options.rotation, options.continuous
 
   dr = (r-range.1 - r-range.0) / (canvas.width - 0.5)
   di = (i-range.1 - i-range.0) / (canvas.height - 0.5)

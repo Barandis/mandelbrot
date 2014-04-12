@@ -32,7 +32,7 @@
       var ref$, rRange, iRange, compute, dr, di, drawLine, drawSupersampledLine, drawSolidLine, drawLines;
       stopping = false;
       ref$ = getRange(options), rRange = ref$[0], iRange = ref$[1];
-      compute = mandelbrot.calculator(options.palette, options.escape, options.depth, options.continuous);
+      compute = mandelbrot.calculator(options.palette, options.escape, options.depth, options.cycles, options.rotation, options.continuous);
       dr = (rRange[1] - rRange[0]) / (canvas.width - 0.5);
       di = (iRange[1] - iRange[0]) / (canvas.height - 0.5);
       updateInfo(options, rRange, iRange);

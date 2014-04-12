@@ -86,22 +86,22 @@ const uf-colors =
   [ 25   7  26]
 
 palettes = 
-  (n, tr, ti, depth, cont) ->
+  (n, tr, ti, depth, cycles, rotation, cont) ->
     if depth is n then set-color
     else
       if cont
-        v = 256.0 * (interpolate n, tr, ti) / depth
+        v = 16.0 * cycles * (interpolate n, tr, ti) / depth
         v = 0.0 if v < 0.0
-        a = (Math.floor v) % 16
+        a = ((Math.floor v) + rotation) % 16
         b = v % 1
         c1 = uf-colors[a]
         c2 = uf-colors[(a + 1) % 16]
         [c1.0 + b * (c2.0 - c1.0), c1.1 + b * (c2.1 - c1.1), c1.2 + b * (c2.2 - c1.2)]
       else
-        v = Math.floor 256.0 * n / depth
-        uf-colors[v % 16]
+        v = Math.floor 16.0 * cycles * n / depth
+        uf-colors[(v + rotation) % 16]
 
-  (n, tr, ti, depth, cont) ->
+  (n, tr, ti, depth, cycles, rotation, cont) ->
     if depth is n then set-color
     else
       v = if cont then interpolate n, tr, ti else n
@@ -109,7 +109,7 @@ palettes =
       c.push 255
       c
 
-  (n, tr, ti, depth, cont) ->
+  (n, tr, ti, depth, cycles, rotation, cont) ->
     if depth is n then set-color
     else 
       v = if cont then interpolate n, tr, ti else n
@@ -152,7 +152,7 @@ to-rgb = (h, s, v) ->
 interpolate = (n, tr, ti) ->
   1 + n - log-half - log-base * Math.log Math.log tr + ti
 
-calculator: (palette, escape, depth, cont) ->
+calculator: (palette, escape, depth, cycles, rotation, cont) ->
   (cr, ci) ->
     p = mandelbrot cr, ci, escape, depth
-    palettes[palette] p.0, p.1, p.2, depth, cont
+    palettes[palette] p.0, p.1, p.2, depth, cycles, rotation, cont

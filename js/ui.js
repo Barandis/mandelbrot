@@ -34,6 +34,8 @@
       depth: 50,
       autoDepth: true,
       palette: 0,
+      cycles: 10,
+      rotation: 0,
       update: 100,
       continuous: true
     };
@@ -152,6 +154,12 @@
         case 'p':
           options.palette = parseInt(value);
           break;
+        case 'y':
+          options.cycles = parseInt(value);
+          break;
+        case 'o':
+          options.rotation = parseInt(value);
+          break;
         case 'u':
           options.update = parseInt(value);
           break;
@@ -163,7 +171,7 @@
       fillSettingsFromOptions();
     };
     fillOptionsFromSettings = function(){
-      var re, im, zoom, escape, supersamples, depth, autoDepth, palette, update, continuous;
+      var re, im, zoom, escape, supersamples, depth, autoDepth, palette, cycles, rotation, update, continuous;
       re = $.trim($('#re').val());
       im = $.trim($('#im').val());
       zoom = $.trim($('#zoom').val());
@@ -172,27 +180,35 @@
       depth = $.trim($('#depth').val());
       autoDepth = $('#auto-depth').is(':checked');
       palette = parseInt($('#palette').val());
+      cycles = $.trim($('#cycles').val());
+      rotation = $.trim($('#rotation').val());
       update = $.trim($('#update').val());
       continuous = $('#continuous').is(':checked');
-      if (re) {
+      if (re != null) {
         options.re = parseFloat(re);
       }
-      if (im) {
+      if (im != null) {
         options.im = parseFloat(im);
       }
-      if (zoom) {
+      if (zoom != null) {
         options.zoom = parseFloat(zoom);
       }
-      if (escape) {
+      if (escape != null) {
         options.escape = parseFloat(escape);
       }
       options.supersamples = supersamples;
-      if (depth) {
+      if (depth != null) {
         options.depth = parseInt(depth);
       }
       options.autoDepth = autoDepth;
       options.palette = palette;
-      if (update) {
+      if (cycles != null) {
+        options.cycles = parseInt(cycles);
+      }
+      if (rotation != null) {
+        options.rotation = parseInt(rotation);
+      }
+      if (update != null) {
         options.update = parseInt(update);
       }
       options.continuous = continuous;
@@ -200,15 +216,15 @@
       fillUrlFromOptions();
     };
     fillUrlFromOptions = function(){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
+      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, cycles, rotation, update, continuous;
+      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, cycles = options.cycles, rotation = options.rotation, update = options.update, continuous = options.continuous;
       autoDepth = autoDepth ? 1 : 0;
       continuous = continuous ? 1 : 0;
-      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + autoDepth + "&s=" + supersamples + "&p=" + palette + "&u=" + update + "&c=" + continuous;
+      window.location.hash = "r=" + re + "&i=" + im + "&z=" + zoom + "&e=" + escape + "&d=" + depth + "&a=" + autoDepth + "&s=" + supersamples + "&p=" + palette + "&y=" + cycles + "&o=" + rotation + "&u=" + update + "&c=" + continuous;
     };
     fillSettingsFromOptions = function(){
-      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, update, continuous;
-      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, update = options.update, continuous = options.continuous;
+      var re, im, zoom, escape, depth, autoDepth, supersamples, palette, cycles, rotation, update, continuous;
+      re = options.re, im = options.im, zoom = options.zoom, escape = options.escape, depth = options.depth, autoDepth = options.autoDepth, supersamples = options.supersamples, palette = options.palette, cycles = options.cycles, rotation = options.rotation, update = options.update, continuous = options.continuous;
       $('#re').val(re);
       $('#im').val(im);
       $('#zoom').val(zoom);
@@ -216,6 +232,8 @@
       $('#depth').val(depth);
       $('#update').val(update);
       $('#palette').val(palette);
+      $('#cycles').val(cycles);
+      $('#rotation').val(rotation);
       $('#supersamples').val(supersamples);
       $('#auto-depth').prop('checked', autoDepth);
       $('#continuous').prop('checked', continuous);

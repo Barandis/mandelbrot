@@ -124,6 +124,16 @@ input
   border-color #666
   label
     width settings-label-width
+  .half
+    padding-left settings-label-width
+    label
+      width (settings-label-width * 0.6)
+  .coloring
+    margin-top 0.4em
+    > label
+      float left
+    > div
+      margin-left settings-label-width
   header
     text-align center
     padding 5px 0
@@ -151,14 +161,11 @@ input
         width 13em
       &[type="checkbox"] + label
         display inline
+    #cycles
+    #rotation
+      width 9em
     #depth
       width 6em
-    .coloring
-      margin-top 0.4em
-      > label
-        float left
-      > div
-        margin-left settings-label-width
 
 #render
   width 20em
